@@ -1,0 +1,21 @@
+# Local/work-specific shell configuration
+# Copy this to ~/.zsh/local.zsh and customize
+# This file is NOT committed to the dotfiles repo
+# vim: set ft=zsh :
+
+# ============================================
+# Work Environment (Example)
+# ============================================
+
+# Work-specific paths
+# export WORK_DIR="$HOME/work"
+# CDPATH=".:~:~/work:~/github"
+
+# Work aliases
+# alias myproject="cd ~/work/myproject"
+
+# Work-specific environment variables
+# export SOME_API_KEY="..." # Better: use a secrets manager
+
+# Source work-specific profile if it exists
+# [[ -f ~/.work_profile ]] && source ~/.work_profile

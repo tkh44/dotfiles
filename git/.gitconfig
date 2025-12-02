@@ -1,0 +1,36 @@
+[http]
+	postBuffer = 524288000
+[mergetool]
+	keepBackup = false
+[core]
+	excludesfile = ~/.gitignore_global
+	autocrlf = input
+	whitespace = trailing-space,space-before-tab
+[diff]
+	mnemonicprefix = true
+[push]
+	default = simple
+	autoSetupRemote = true
+[merge]
+	stat = true
+[credential]
+	helper = osxkeychain
+[url "git@github.com:"]
+	insteadOf = https://github.com/
+[feature]
+	manyFiles = 1
+[user]
+	name = Kye Hohenberger
+	# email = (set via: git config --global user.email "your@email.com")
+	# signingkey = (set via: git config --global user.signingkey "YOUR_KEY_ID")
+[pull]
+	rebase = false
+[alias]
+	rb = "!git checkout $(git for-each-ref --sort='-committerdate' --format='%(refname)%09%(committerdate)' refs/heads | sed -e 's-refs/heads/--' | fzf | cut -f1)"
+	s = status
+[commit]
+	gpgsign = true
+[oh-my-zsh]
+	hide-dirty = 1
+[branch]
+	sort = committerdate

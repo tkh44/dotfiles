@@ -1,0 +1,30 @@
+# OS
+.DS_Store
+*~
+
+# Secrets - NEVER commit these
+.netrc
+.npmrc
+.env
+.env.*
+*.cer
+*.pem
+*.key
+.aws/
+
+# Machine-specific (should stay local)
+.zsh/local.zsh
+**/local.zsh
+
+# Editor
+.idea/
+*.swp
+*.swo
+*~
+
+# Claude/Cursor
+.claude/
+_cursor/
+
+# NVChad generated files (optional - remove if you want to track plugin state)
+# nvim/.config/nvim/lazy-lock.json
