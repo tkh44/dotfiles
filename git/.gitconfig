@@ -21,8 +21,11 @@
 	manyFiles = 1
 [user]
 	name = Kye Hohenberger
-	# email = (set via: git config --global user.email "your@email.com")
-	# signingkey = (set via: git config --global user.signingkey "YOUR_KEY_ID")
+	# email and signingkey are set in ~/.gitconfig.local (not in dotfiles)
+
+# Include local/machine-specific config (email, signing key, work settings)
+[include]
+	path = ~/.gitconfig.local
 [pull]
 	rebase = false
 [alias]

@@ -32,6 +32,10 @@ if [[ -z "$SKIP_HEAVY_SHELL_INIT" ]]; then
   plugins=(git)
   source $ZSH/oh-my-zsh.sh
   [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+  # zsh-autosuggestions (inline ghost text from history)
+  [[ -f ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh ]] && \
+    source ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 fi
 
 # Environment variables

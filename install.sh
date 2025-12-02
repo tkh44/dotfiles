@@ -49,6 +49,13 @@ if [[ ! -d "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-autocomplete" ]];
     git clone --depth 1 https://github.com/marlonrichert/zsh-autocomplete.git "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-autocomplete"
 fi
 
+# Install zsh-autosuggestions plugin (inline ghost text)
+if [[ ! -d "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-autosuggestions" ]]; then
+    echo ""
+    echo "Installing zsh-autosuggestions plugin..."
+    git clone --depth 1 https://github.com/zsh-users/zsh-autosuggestions.git "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-autosuggestions"
+fi
+
 # Backup existing dotfiles and stow
 echo ""
 echo "Stowing dotfiles..."
@@ -78,7 +85,7 @@ echo "Generating zoxide cache..."
 mkdir -p ~/.cache
 zoxide init zsh > ~/.cache/zoxide.zsh
 
-# Configure git user
+# Configure git user (uses ~/.gitconfig.local which is included by ~/.gitconfig)
 echo ""
 echo "==================================="
 echo "  Git Configuration"
@@ -86,7 +93,7 @@ echo "==================================="
 current_email=$(git config --global user.email 2>/dev/null || echo "")
 if [[ -z "$current_email" ]]; then
     read -p "Enter your git email: " git_email
-    git config --global user.email "$git_email"
+    git config -f ~/.gitconfig.local user.email "$git_email"
     echo "Git email set to: $git_email"
 else
     echo "Git email already configured: $current_email"
@@ -100,7 +107,7 @@ if [[ -z "$current_key" ]]; then
     echo "To set up GPG signing:"
     echo "  1. Generate a key: gpg --full-generate-key"
     echo "  2. List keys: gpg --list-secret-keys --keyid-format=long"
-    echo "  3. Set key: git config --global user.signingkey YOUR_KEY_ID"
+    echo "  3. Set key: git config -f ~/.gitconfig.local user.signingkey YOUR_KEY_ID"
 fi
 
 # Create local.zsh if it doesn't exist

@@ -33,7 +33,6 @@ brew "go"            # Go language
 # brew "tree"        # Directory tree view
 
 # Fonts (required for terminal/editor)
-tap "homebrew/cask-fonts"
 cask "font-jetbrains-mono-nerd-font"  # Used by Ghostty and p10k
 
 # Casks (GUI apps)
