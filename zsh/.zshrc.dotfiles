@@ -23,9 +23,6 @@ if [[ -z "$SKIP_HEAVY_SHELL_INIT" ]]; then
 fi
 
 if [[ -z "$SKIP_HEAVY_SHELL_INIT" ]]; then
-  # zsh-autocomplete must be sourced before compinit
-  source ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-autocomplete/zsh-autocomplete.plugin.zsh
-
   ZSH_THEME="powerlevel10k/powerlevel10k"
   plugins=(git)
   source $ZSH/oh-my-zsh.sh
@@ -111,8 +108,3 @@ preexec_functions+=(set_terminal_title_with_cmd)
 
 # Source local/work-specific config (not in dotfiles repo)
 [[ -f ~/.zsh/local.zsh ]] && source ~/.zsh/local.zsh
-
-# >>> gohan setup, do not edit this section <<<
-# !! Contents within this block are managed by gohan !!
-[ -f "/Users/kyehohenberger/.config/gohan/gohan.sh" ] && source "/Users/kyehohenberger/.config/gohan/gohan.sh"
-# <<< gohan setup end <<<
