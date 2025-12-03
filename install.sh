@@ -56,6 +56,13 @@ if [[ ! -d "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-autosuggestions" 
     git clone --depth 1 https://github.com/zsh-users/zsh-autosuggestions.git "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-autosuggestions"
 fi
 
+# Install zsh-nvm plugin (lazy loading + auto .nvmrc)
+if [[ ! -d "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-nvm" ]]; then
+    echo ""
+    echo "Installing zsh-nvm plugin..."
+    git clone --depth 1 https://github.com/lukechilds/zsh-nvm.git "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-nvm"
+fi
+
 # Backup existing dotfiles and stow
 echo ""
 echo "Stowing dotfiles..."

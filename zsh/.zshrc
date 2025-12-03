@@ -12,51 +12,14 @@ fi
 # Path to your oh-my-zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
 
-# NVM setup with smart lazy loading
-# - If .nvmrc exists in current dir: load nvm immediately and use correct version
-# - Otherwise: lazy load nvm on first use of node/npm/etc
+# NVM via zsh-nvm plugin (lazy loading + auto use .nvmrc)
 export NVM_DIR="$HOME/.nvm"
 if [[ -z "$SKIP_HEAVY_SHELL_INIT" ]]; then
-  _nvm_loaded=0
-
-  _load_nvm() {
-    if [[ $_nvm_loaded -eq 0 ]]; then
-      unset -f node npm npx nvm pnpm yarn 2>/dev/null
-      [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
-      _nvm_loaded=1
-    fi
-  }
-
-  # Check if we need nvm immediately (has .nvmrc in current or parent dirs)
-  _find_nvmrc() {
-    local dir="$PWD"
-    while [[ "$dir" != "" && ! -f "$dir/.nvmrc" ]]; do
-      dir="${dir%/*}"
-    done
-    [[ -f "$dir/.nvmrc" ]] && echo "$dir/.nvmrc"
-  }
-
-  if [[ -n "$(_find_nvmrc)" ]]; then
-    # In a node project - load nvm now and use correct version
-    _load_nvm
-    nvm use --silent 2>/dev/null
-  else
-    # Not in a node project - lazy load for speed
-    for cmd in node npm npx nvm pnpm yarn; do
-      eval "$cmd() { _load_nvm && $cmd \"\$@\" }"
-    done
-  fi
-
-  # Auto-switch node version when cd'ing into directory with .nvmrc
-  _nvm_auto_use() {
-    if [[ -n "$(_find_nvmrc)" ]]; then
-      _load_nvm
-      nvm use --silent 2>/dev/null
-    fi
-  }
-
-  autoload -U add-zsh-hook
-  add-zsh-hook chpwd _nvm_auto_use
+  export NVM_LAZY_LOAD=true
+  export NVM_AUTO_USE=true
+  export NVM_LAZY_LOAD_EXTRA_COMMANDS=('claude')
+  [[ -f ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-nvm/zsh-nvm.plugin.zsh ]] && \
+    source ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-nvm/zsh-nvm.plugin.zsh
 fi
 
 if [[ -z "$SKIP_HEAVY_SHELL_INIT" ]]; then
@@ -148,3 +111,8 @@ preexec_functions+=(set_terminal_title_with_cmd)
 
 # Source local/work-specific config (not in dotfiles repo)
 [[ -f ~/.zsh/local.zsh ]] && source ~/.zsh/local.zsh
+
+# >>> gohan setup, do not edit this section <<<
+# !! Contents within this block are managed by gohan !!
+[ -f "/Users/kyehohenberger/.config/gohan/gohan.sh" ] && source "/Users/kyehohenberger/.config/gohan/gohan.sh"
+# <<< gohan setup end <<<
