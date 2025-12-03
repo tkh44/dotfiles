@@ -14,10 +14,26 @@ export ZSH="$HOME/.oh-my-zsh"
 
 # NVM via zsh-nvm plugin (lazy loading + auto use .nvmrc)
 export NVM_DIR="$HOME/.nvm"
+
+# Add default node to PATH immediately (for globally linked packages like pastry, claude)
+# This avoids needing to trigger nvm load just to use global CLIs
+if [[ -f "$NVM_DIR/alias/default" ]]; then
+  DEFAULT_NODE_VERSION=$(cat "$NVM_DIR/alias/default")
+  # Handle both "23" and "v23.6.0" formats
+  if [[ -d "$NVM_DIR/versions/node/v$DEFAULT_NODE_VERSION" ]]; then
+    export PATH="$NVM_DIR/versions/node/v$DEFAULT_NODE_VERSION/bin:$PATH"
+  elif [[ -d "$NVM_DIR/versions/node/$DEFAULT_NODE_VERSION" ]]; then
+    export PATH="$NVM_DIR/versions/node/$DEFAULT_NODE_VERSION/bin:$PATH"
+  else
+    # Find the latest matching version
+    MATCHING_VERSION=$(ls -1 "$NVM_DIR/versions/node/" 2>/dev/null | grep "^v$DEFAULT_NODE_VERSION" | sort -V | tail -1)
+    [[ -n "$MATCHING_VERSION" ]] && export PATH="$NVM_DIR/versions/node/$MATCHING_VERSION/bin:$PATH"
+  fi
+fi
+
 if [[ -z "$SKIP_HEAVY_SHELL_INIT" ]]; then
   export NVM_LAZY_LOAD=true
   export NVM_AUTO_USE=true
-  export NVM_LAZY_LOAD_EXTRA_COMMANDS=('claude')
   [[ -f ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-nvm/zsh-nvm.plugin.zsh ]] && \
     source ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-nvm/zsh-nvm.plugin.zsh
 fi
