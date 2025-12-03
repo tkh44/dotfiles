@@ -1,4 +1,19 @@
 return {
+  -- NvimTree: show gitignored files
+  {
+    "nvim-tree/nvim-tree.lua",
+    opts = {
+      git = {
+        enable = true,
+        ignore = false, -- show gitignored files
+      },
+      filters = {
+        dotfiles = false,
+        git_ignored = false, -- show gitignored files
+      },
+    },
+  },
+
   {
     "stevearc/conform.nvim",
     event = "BufWritePre", -- format on save enabled

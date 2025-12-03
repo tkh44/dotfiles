@@ -15,13 +15,41 @@ export ZSH="$HOME/.oh-my-zsh"
 # Lazy load nvm for faster shell startup (~1-2s savings)
 export NVM_DIR="$HOME/.nvm"
 if [[ -z "$SKIP_HEAVY_SHELL_INIT" ]]; then
-  lazy_load_nvm() {
-    unset -f node npm npx nvm pnpm yarn
-    [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+  # Track if nvm is loaded
+  _nvm_loaded=0
+
+  _load_nvm() {
+    if [[ $_nvm_loaded -eq 0 ]]; then
+      unset -f node npm npx nvm pnpm yarn 2>/dev/null
+      [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+      _nvm_loaded=1
+    fi
   }
+
+  # Lazy load wrappers
   for cmd in node npm npx nvm pnpm yarn; do
-    eval "$cmd() { lazy_load_nvm && $cmd \"\$@\" }"
+    eval "$cmd() { _load_nvm && $cmd \"\$@\" }"
   done
+
+  # Auto-switch node version when entering directory with .nvmrc
+  _nvm_auto_use() {
+    if [[ -f .nvmrc ]]; then
+      _load_nvm
+      local nvmrc_node_version=$(cat .nvmrc)
+      local current_node_version=$(node -v 2>/dev/null | sed 's/^v//')
+      # Only switch if different (check if nvmrc version is prefix of current)
+      if [[ ! "$current_node_version" == "$nvmrc_node_version"* ]]; then
+        nvm use --silent
+      fi
+    fi
+  }
+
+  # Hook into directory change
+  autoload -U add-zsh-hook
+  add-zsh-hook chpwd _nvm_auto_use
+
+  # Check on shell start too (for initial directory)
+  _nvm_auto_use
 fi
 
 if [[ -z "$SKIP_HEAVY_SHELL_INIT" ]]; then
