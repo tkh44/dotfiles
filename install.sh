@@ -86,6 +86,31 @@ stow_package "git"
 stow_package "shell"
 stow_package "ghostty"
 
+# Create ~/.zshrc loader if it doesn't exist or doesn't source our config
+if [[ ! -f "$HOME/.zshrc" ]] || ! grep -q "zshrc.dotfiles" "$HOME/.zshrc" 2>/dev/null; then
+    echo ""
+    echo "Creating ~/.zshrc loader..."
+    # Prepend our source line, keep existing content
+    if [[ -f "$HOME/.zshrc" ]]; then
+        existing=$(cat "$HOME/.zshrc")
+        echo '# Source dotfiles-managed zsh config
+[[ -f ~/.zshrc.dotfiles ]] && source ~/.zshrc.dotfiles
+
+# ============================================
+# Auto-managed by tools (gohan, installers, etc.)
+# ============================================
+'"$existing" > "$HOME/.zshrc"
+    else
+        echo '# Source dotfiles-managed zsh config
+[[ -f ~/.zshrc.dotfiles ]] && source ~/.zshrc.dotfiles
+
+# ============================================
+# Auto-managed by tools (gohan, installers, etc.)
+# ============================================
+' > "$HOME/.zshrc"
+    fi
+fi
+
 # Generate zoxide cache
 echo ""
 echo "Generating zoxide cache..."
