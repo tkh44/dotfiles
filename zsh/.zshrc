@@ -12,10 +12,11 @@ fi
 # Path to your oh-my-zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
 
-# Lazy load nvm for faster shell startup (~1-2s savings)
+# NVM setup with smart lazy loading
+# - If .nvmrc exists in current dir: load nvm immediately and use correct version
+# - Otherwise: lazy load nvm on first use of node/npm/etc
 export NVM_DIR="$HOME/.nvm"
 if [[ -z "$SKIP_HEAVY_SHELL_INIT" ]]; then
-  # Track if nvm is loaded
   _nvm_loaded=0
 
   _load_nvm() {
@@ -26,30 +27,36 @@ if [[ -z "$SKIP_HEAVY_SHELL_INIT" ]]; then
     fi
   }
 
-  # Lazy load wrappers
-  for cmd in node npm npx nvm pnpm yarn; do
-    eval "$cmd() { _load_nvm && $cmd \"\$@\" }"
-  done
+  # Check if we need nvm immediately (has .nvmrc in current or parent dirs)
+  _find_nvmrc() {
+    local dir="$PWD"
+    while [[ "$dir" != "" && ! -f "$dir/.nvmrc" ]]; do
+      dir="${dir%/*}"
+    done
+    [[ -f "$dir/.nvmrc" ]] && echo "$dir/.nvmrc"
+  }
 
-  # Auto-switch node version when entering directory with .nvmrc
+  if [[ -n "$(_find_nvmrc)" ]]; then
+    # In a node project - load nvm now and use correct version
+    _load_nvm
+    nvm use --silent 2>/dev/null
+  else
+    # Not in a node project - lazy load for speed
+    for cmd in node npm npx nvm pnpm yarn; do
+      eval "$cmd() { _load_nvm && $cmd \"\$@\" }"
+    done
+  fi
+
+  # Auto-switch node version when cd'ing into directory with .nvmrc
   _nvm_auto_use() {
-    if [[ -f .nvmrc ]]; then
+    if [[ -n "$(_find_nvmrc)" ]]; then
       _load_nvm
-      local nvmrc_node_version=$(cat .nvmrc)
-      local current_node_version=$(node -v 2>/dev/null | sed 's/^v//')
-      # Only switch if different (check if nvmrc version is prefix of current)
-      if [[ ! "$current_node_version" == "$nvmrc_node_version"* ]]; then
-        nvm use --silent
-      fi
+      nvm use --silent 2>/dev/null
     fi
   }
 
-  # Hook into directory change
   autoload -U add-zsh-hook
   add-zsh-hook chpwd _nvm_auto_use
-
-  # Check on shell start too (for initial directory)
-  _nvm_auto_use
 fi
 
 if [[ -z "$SKIP_HEAVY_SHELL_INIT" ]]; then
