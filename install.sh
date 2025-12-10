@@ -49,11 +49,15 @@ if [[ ! -d "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-autosuggestions" 
     git clone --depth 1 https://github.com/zsh-users/zsh-autosuggestions.git "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-autosuggestions"
 fi
 
-# Install zsh-nvm plugin (lazy loading + auto .nvmrc)
-if [[ ! -d "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-nvm" ]]; then
+# Install default Node version via fnm
+if command -v fnm &> /dev/null; then
     echo ""
-    echo "Installing zsh-nvm plugin..."
-    git clone --depth 1 https://github.com/lukechilds/zsh-nvm.git "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-nvm"
+    echo "Setting up fnm and installing Node..."
+    eval "$(fnm env)"
+    if ! fnm list | grep -q "v"; then
+        fnm install --lts
+        fnm default lts-latest
+    fi
 fi
 
 # Backup existing dotfiles and stow
@@ -78,6 +82,7 @@ stow_package "nvim"
 stow_package "git"
 stow_package "shell"
 stow_package "ghostty"
+
 
 # Create ~/.zshrc loader if it doesn't exist or doesn't source our config
 if [[ ! -f "$HOME/.zshrc" ]] || ! grep -q "zshrc.dotfiles" "$HOME/.zshrc" 2>/dev/null; then

@@ -1,6 +1,12 @@
 vim.g.base46_cache = vim.fn.stdpath "data" .. "/base46/"
 vim.g.mapleader = " "
 
+-- Add fnm node to PATH (for GUI-launched Neovim where shell PATH isn't inherited)
+local fnm_node = vim.fn.expand("~/Library/Application Support/fnm/aliases/default/bin")
+if vim.fn.isdirectory(fnm_node) == 1 then
+  vim.env.PATH = fnm_node .. ":" .. vim.env.PATH
+end
+
 -- bootstrap lazy and all plugins
 local lazypath = vim.fn.stdpath "data" .. "/lazy/lazy.nvim"
 

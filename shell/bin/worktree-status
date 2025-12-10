@@ -1,0 +1,175 @@
+#!/usr/bin/env bun
+/**
+ * worktree-status - Show all worktrees for a repo with their branches
+ * Usage: worktree-status <repo-name>
+ */
+
+import { $ } from "bun";
+import { existsSync } from "fs";
+import { basename, join } from "path";
+import { homedir } from "os";
+
+const color = (s: string, c: string) => `${Bun.color(c, "ansi")}${s}\x1b[0m`;
+
+const SEARCH_PATHS = [
+  join(homedir(), "github"),
+  join(homedir(), "instacart"),
+  join(homedir(), "ava"),
+  homedir(),
+];
+
+async function findRepo(repoName: string): Promise<string | null> {
+  // Check common locations first
+  for (const base of SEARCH_PATHS) {
+    const repoPath = join(base, repoName);
+    const gitDir = join(repoPath, ".git");
+    if (existsSync(gitDir)) {
+      return repoPath;
+    }
+  }
+
+  // Fallback to fd search
+  try {
+    const result = await $`fd -t d -H "^${repoName}$" ${homedir()} --max-depth 3`
+      .quiet()
+      .text();
+    const firstMatch = result.trim().split("\n")[0];
+    if (firstMatch && existsSync(firstMatch)) {
+      return firstMatch;
+    }
+  } catch {
+    // fd not found or no results
+  }
+
+  return null;
+}
+
+interface Worktree {
+  path: string;
+  head: string;
+  branch: string;
+}
+
+async function parseWorktrees(repoPath: string): Promise<Worktree[]> {
+  const output = await $`git -C ${repoPath} worktree list --porcelain`
+    .quiet()
+    .text();
+
+  const worktrees: Worktree[] = [];
+  let current: Partial<Worktree> = {};
+
+  for (const line of output.split("\n")) {
+    if (line.startsWith("worktree ")) {
+      current.path = line.slice(9);
+    } else if (line.startsWith("HEAD ")) {
+      current.head = line.slice(5, 12); // First 7 chars of SHA
+    } else if (line.startsWith("branch refs/heads/")) {
+      current.branch = line.slice(18);
+    } else if (line === "detached") {
+      current.branch = "(detached)";
+    } else if (line === "" && current.path) {
+      worktrees.push(current as Worktree);
+      current = {};
+    }
+  }
+
+  // Handle last entry if no trailing newline
+  if (current.path) {
+    worktrees.push(current as Worktree);
+  }
+
+  return worktrees;
+}
+
+async function getWorktreeStatus(
+  worktreePath: string
+): Promise<{ hasChanges: boolean; ahead: number; behind: number }> {
+  if (!existsSync(worktreePath)) {
+    return { hasChanges: false, ahead: 0, behind: 0 };
+  }
+
+  let hasChanges = false;
+  let ahead = 0;
+  let behind = 0;
+
+  try {
+    // Check for uncommitted changes
+    const diffResult = await $`git -C ${worktreePath} diff --quiet`.quiet().nothrow();
+    const diffCachedResult = await $`git -C ${worktreePath} diff --cached --quiet`.quiet().nothrow();
+    hasChanges = diffResult.exitCode !== 0 || diffCachedResult.exitCode !== 0;
+  } catch {
+    // Ignore errors
+  }
+
+  try {
+    // Get ahead/behind counts
+    const aheadBehind = await $`git -C ${worktreePath} rev-list --left-right --count HEAD...@{upstream}`
+      .quiet()
+      .text();
+    const [aheadStr, behindStr] = aheadBehind.trim().split(/\s+/);
+    ahead = parseInt(aheadStr, 10) || 0;
+    behind = parseInt(behindStr, 10) || 0;
+  } catch {
+    // No upstream or other error
+  }
+
+  return { hasChanges, ahead, behind };
+}
+
+function colorBranch(branch: string): string {
+  if (branch === "main" || branch === "master") {
+    return color(branch, "green");
+  } else if (branch === "(detached)") {
+    return color(branch, "yellow");
+  }
+  return color(branch, "cyan");
+}
+
+async function main() {
+  const repoName = process.argv[2];
+
+  if (!repoName) {
+    console.log("Usage: worktree-status <repo-name>");
+    console.log("Example: worktree-status isc-web");
+    process.exit(1);
+  }
+
+  const repoPath = await findRepo(repoName);
+
+  if (!repoPath) {
+    console.log(`Could not find repo: ${repoName}`);
+    process.exit(1);
+  }
+
+  // Verify it's a git repo
+  try {
+    await $`git -C ${repoPath} rev-parse --git-dir`.quiet();
+  } catch {
+    console.log(`Not a git repository: ${repoPath}`);
+    process.exit(1);
+  }
+
+  console.log();
+  console.log(`${repoName}`);
+  console.log(`   ${repoPath}`);
+  console.log();
+
+  const worktrees = await parseWorktrees(repoPath);
+
+  for (const wt of worktrees) {
+    const dirName = basename(wt.path);
+    const status = await getWorktreeStatus(wt.path);
+
+    let statusStr = "";
+    if (status.hasChanges) statusStr += " *";
+    if (status.ahead > 0) statusStr += ` ↑${status.ahead}`;
+    if (status.behind > 0) statusStr += ` ↓${status.behind}`;
+
+    const branchStr = colorBranch(wt.branch);
+    console.log(`   ${dirName.padEnd(30)} ${branchStr}${statusStr}`);
+  }
+
+  console.log();
+}
+
+main();

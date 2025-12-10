@@ -1,4 +1,37 @@
 return {
+  -- Telescope: configure find_files to include .cursor directory
+  {
+    "nvim-telescope/telescope.nvim",
+    opts = {
+      defaults = {
+        file_ignore_patterns = {
+          "node_modules/",
+          ".git/",
+          "dist/",
+          "build/",
+        },
+      },
+      pickers = {
+        find_files = {
+          -- Include gitignored files but use file_ignore_patterns above
+          hidden = true,
+          find_command = {
+            "fd",
+            "--type", "f",
+            "--hidden",
+            "--no-ignore-vcs",  -- Include gitignored files
+            "--exclude", "node_modules",
+            "--exclude", ".git",
+            "--exclude", "dist",
+            "--exclude", "build",
+            "--exclude", ".next",
+            "--exclude", "coverage",
+          },
+        },
+      },
+    },
+  },
+
   -- NvimTree: show gitignored files
   {
     "nvim-tree/nvim-tree.lua",

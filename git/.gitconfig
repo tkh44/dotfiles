@@ -21,6 +21,7 @@
 	manyFiles = 1
 [user]
 	name = Kye Hohenberger
+	email = kye.hohenberger@instacart.com
 	# email and signingkey are set in ~/.gitconfig.local (not in dotfiles)
 
 # Include local/machine-specific config (email, signing key, work settings)
@@ -37,3 +38,62 @@
 	hide-dirty = 1
 [branch]
 	sort = committerdate
+[safe]
+	directory = /var/app
+	directory = /var/app
+	directory = /var/app
+	directory = /var/app
+	directory = /var/app
+	directory = /var/app
+	directory = /var/app
+	directory = /var/app
+	directory = /var/app
+	directory = /var/app
+	directory = /var/app
+	directory = /var/app
+	directory = /var/app
+	directory = /var/app
+	directory = /var/app
+	directory = /var/app
+	directory = /var/app
+	directory = /var/app
+	directory = /var/app
+	directory = /var/app
+	directory = /var/app
+	directory = /var/app
+	directory = /var/app
+	directory = /var/app
+	directory = /var/app
+	directory = /var/app
+	directory = /var/app
+	directory = /var/app
+	directory = /var/app
+	directory = /var/app
+	directory = /var/app
+	directory = /var/app
+	directory = /var/app
+	directory = /var/app
+	directory = /var/app
+	directory = /var/app
+	directory = /var/app
+	directory = /var/app
+	directory = /var/app
+	directory = /var/app
+	directory = /var/app
+	directory = /var/app
+	directory = /var/app
+	directory = /var/app
+	directory = /var/app
+	directory = /var/app
+	directory = /var/app
+	directory = /var/app
+	directory = /var/app
+	directory = /var/app
+	directory = /var/app
+	directory = /var/app
+	directory = /var/app
+	directory = /var/app
+	directory = /var/app
+	directory = /var/app
+	directory = /var/app
+	directory = /var/app

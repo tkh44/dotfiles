@@ -22,8 +22,9 @@ brew "gnupg"         # GPG for commit signing
 brew "zsh"
 
 # Development
-brew "node"          # Node.js (or use nvm)
+brew "fnm"           # Fast Node Manager (manages Node versions)
 brew "go"            # Go language
+brew "bun"           # Fast JS/TS runtime for CLI tools
 
 # Optional - uncomment if needed
 # brew "tmux"        # Terminal multiplexer
