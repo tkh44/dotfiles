@@ -5,755 +5,480 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Vim + Tmux Reference</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #0c0c0c;
-      --surface: #161616;
-      --border: #262626;
-      --text: #e5e5e5;
-      --text-dim: #737373;
-      --accent: #e5a855;
-      --key-bg: #1f1f1f;
-      --key-border: #333;
+      --crust: #181926;
+      --mantle: #1e2030;
+      --base: #24273a;
+      --surface0: #363a4f;
+      --surface1: #494d64;
+      --surface2: #5b6078;
+      --overlay0: #6e738d;
+      --overlay1: #8087a2;
+      --text: #cad3f5;
+      --subtext0: #a5adcb;
+      --subtext1: #b8c0e0;
+      --lavender: #b7bdf8;
+      --blue: #8aadf4;
+      --sapphire: #7dc4e4;
+      --sky: #91d7e3;
+      --teal: #8bd5ca;
+      --green: #a6da95;
+      --yellow: #eed49f;
+      --peach: #f5a97f;
+      --maroon: #ee99a0;
+      --red: #ed8796;
+      --mauve: #c6a0f6;
+      --pink: #f5bde6;
+      --flamingo: #f0c6c6;
+      --rosewater: #f4dbd6;
     }
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    html {
-      font-size: 15px;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
-      font-family: 'JetBrains Mono', monospace;
-      background: var(--bg);
+      font-family: 'IBM Plex Mono', monospace;
+      background: var(--base);
       color: var(--text);
       line-height: 1.5;
-      min-height: 100vh;
+      padding: 2rem;
+      font-size: 14px;
     }
 
-    /* Header */
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
     header {
-      border-bottom: 1px solid var(--border);
-      padding: 3rem 2rem 2rem;
       text-align: center;
+      margin-bottom: 2rem;
     }
 
     h1 {
-      font-family: 'Newsreader', serif;
-      font-size: 2.5rem;
-      font-weight: 400;
-      letter-spacing: -0.02em;
-      margin-bottom: 0.25rem;
+      font-size: 1.25rem;
+      font-weight: 500;
+      color: var(--lavender);
     }
 
-    h1 span {
-      color: var(--accent);
-    }
-
-    .tagline {
-      color: var(--text-dim);
-      font-size: 0.8rem;
+    .subtitle {
+      font-size: 0.7rem;
+      color: var(--subtext0);
       text-transform: uppercase;
       letter-spacing: 0.15em;
     }
 
-    /* Navigation */
-    nav {
-      display: flex;
-      justify-content: center;
-      gap: 2rem;
-      padding: 1rem 2rem;
-      border-bottom: 1px solid var(--border);
-      position: sticky;
-      top: 0;
-      background: var(--bg);
-      z-index: 100;
-    }
-
-    nav a {
-      color: var(--text-dim);
-      text-decoration: none;
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      transition: color 0.15s;
-    }
-
-    nav a:hover {
-      color: var(--accent);
-    }
-
-    /* Main layout */
-    main {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 2rem;
-    }
-
-    /* Section */
-    .section {
-      margin-bottom: 4rem;
-    }
-
-    .section-title {
-      font-family: 'Newsreader', serif;
-      font-size: 1.5rem;
-      font-weight: 400;
-      margin-bottom: 1.5rem;
-      padding-bottom: 0.5rem;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .section-title::before {
-      content: attr(data-num);
-      color: var(--accent);
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.7rem;
-      margin-right: 0.75rem;
-      vertical-align: middle;
-    }
-
-    /* Grid layouts */
-    .cols-2 {
+    /* Two-column layout */
+    .cols {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 3rem;
-    }
-
-    .cols-3 {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 2rem;
-    }
-
-    .cols-4 {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 1.5rem;
-    }
-
-    @media (max-width: 1200px) {
-      .cols-3, .cols-4 { grid-template-columns: repeat(2, 1fr); }
+      grid-template-columns: 1fr 1fr;
+      gap: 2.5rem;
     }
 
     @media (max-width: 768px) {
-      .cols-2, .cols-3, .cols-4 { grid-template-columns: 1fr; }
+      .cols { grid-template-columns: 1fr; }
     }
 
-    /* Block */
-    .block {
-      padding: 1.25rem 0;
+    /* Section */
+    section {
+      margin-bottom: 1.25rem;
     }
 
-    .block-title {
-      font-size: 0.7rem;
+    h2 {
+      font-size: 0.65rem;
+      font-weight: 600;
       text-transform: uppercase;
-      letter-spacing: 0.12em;
-      color: var(--text-dim);
-      margin-bottom: 1rem;
+      letter-spacing: 0.2em;
+      color: var(--mauve);
+      margin-bottom: 0.5rem;
+      padding-bottom: 0.3rem;
+      border-bottom: 1px solid var(--surface1);
     }
 
-    /* Table */
-    table {
-      width: 100%;
-      border-collapse: collapse;
+    /* Command list - tight two column */
+    .list {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 0.1rem 0.6rem;
+      align-items: baseline;
     }
 
-    tr {
-      border-bottom: 1px solid var(--border);
-    }
-
-    tr:last-child {
-      border-bottom: none;
-    }
-
-    td {
-      padding: 0.5rem 0;
-      vertical-align: baseline;
-    }
-
-    td:first-child {
-      width: 40%;
-      padding-right: 1rem;
-    }
-
-    .desc {
-      color: var(--text-dim);
-      font-size: 0.85rem;
-    }
-
-    /* Keys */
-    kbd {
-      display: inline-block;
-      background: var(--key-bg);
-      border: 1px solid var(--key-border);
-      border-radius: 3px;
-      padding: 0.15rem 0.4rem;
-      font-family: inherit;
-      font-size: 0.85rem;
+    .list kbd {
+      color: var(--green);
       font-weight: 500;
-      color: var(--accent);
-      white-space: nowrap;
+      font-size: 0.9em;
+      text-align: right;
     }
 
-    kbd.dim {
-      color: var(--text);
+    .list span {
+      color: var(--subtext1);
+      font-size: 0.85em;
+    }
+
+    /* Alternate row highlight for longer lists */
+    .list-alt {
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+    }
+
+    .list-alt .item {
+      display: flex;
+      gap: 0.6rem;
+      padding: 0.2rem 0.4rem;
+      border-radius: 3px;
+      align-items: baseline;
+    }
+
+    .list-alt .item:nth-child(odd) {
+      background: var(--surface0);
+    }
+
+    .list-alt .item kbd {
+      color: var(--green);
+      font-weight: 500;
+      min-width: 70px;
+    }
+
+    .list-alt .item span {
+      color: var(--subtext1);
+      font-size: 0.85em;
     }
 
     /* Formula */
     .formula {
-      background: var(--surface);
-      padding: 1.25rem 1.5rem;
-      margin: 1rem 0;
-      font-size: 1.1rem;
+      background: var(--mantle);
+      padding: 0.6rem 1rem;
+      border-radius: 4px;
       text-align: center;
+      margin-bottom: 1.5rem;
+      font-size: 0.95rem;
+      border-left: 3px solid var(--mauve);
     }
 
-    .formula .op {
-      color: var(--text-dim);
-      margin: 0 0.5rem;
+    .formula .hl { color: var(--peach); font-weight: 500; }
+    .formula .op { color: var(--overlay1); margin: 0 0.4rem; }
+
+    /* Divider */
+    .divider {
+      grid-column: 1 / -1;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--surface1), transparent);
+      margin: 1.5rem 0;
     }
 
-    .formula .hl {
-      color: var(--accent);
-    }
-
-    /* Examples */
-    .example {
-      padding: 0.5rem 0;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .example:last-child {
-      border-bottom: none;
-    }
-
-    .example code {
-      color: var(--accent);
-    }
-
-    .example .arrow {
-      color: var(--text-dim);
-      margin: 0 0.5rem;
-    }
-
-    .example .result {
-      color: var(--text-dim);
-    }
-
-    /* Compact grid */
-    .cmd-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 0.25rem 1.5rem;
-    }
-
-    .cmd-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      padding: 0.4rem 0;
-      border-bottom: 1px solid var(--border);
-      gap: 1rem;
-    }
-
-    .cmd-item .desc {
-      text-align: right;
-    }
-
-    /* Matrix table */
-    .matrix {
-      overflow-x: auto;
-      margin: 1rem 0;
-    }
-
-    .matrix table {
-      min-width: 800px;
-    }
-
-    .matrix th {
-      font-size: 0.7rem;
+    /* Tmux header */
+    .tmux-header {
+      background: var(--peach);
+      color: var(--crust);
+      padding: 0.25rem 0.5rem;
+      border-radius: 3px;
+      font-size: 0.6rem;
+      font-weight: 600;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: var(--text-dim);
-      font-weight: 500;
-      text-align: left;
-      padding: 0.75rem 0.5rem;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .matrix td {
-      padding: 0.6rem 0.5rem;
-      width: auto;
-    }
-
-    .matrix td:first-child {
-      width: auto;
-    }
-
-    .matrix .sub {
-      display: block;
-      font-size: 0.7rem;
-      color: var(--text-dim);
-      margin-top: 0.2rem;
+      letter-spacing: 0.1em;
+      display: inline-block;
+      margin-bottom: 0.5rem;
     }
 
     /* Note */
     .note {
-      color: var(--text-dim);
-      font-size: 0.8rem;
-      margin-top: 1rem;
-      padding-top: 1rem;
-      border-top: 1px solid var(--border);
+      font-size: 0.75rem;
+      color: var(--overlay1);
+      margin-top: 0.4rem;
+      padding-left: 0.4rem;
+      border-left: 2px solid var(--surface1);
     }
 
-    .note strong {
-      color: var(--text);
+    .note kbd {
+      color: var(--peach);
     }
 
-    /* Translation table */
-    .translation th {
-      font-size: 0.65rem;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--text-dim);
-      font-weight: 500;
-      text-align: left;
-      padding: 0.5rem 0;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .translation td {
-      padding: 0.6rem 0;
-      padding-right: 1rem;
-      width: auto;
-    }
-
-    .translation td:first-child {
-      width: auto;
-    }
-
-    /* Footer */
     footer {
       text-align: center;
-      padding: 2rem;
-      border-top: 1px solid var(--border);
-      color: var(--text-dim);
-      font-size: 0.8rem;
+      padding-top: 1.5rem;
+      margin-top: 1.5rem;
+      border-top: 1px solid var(--surface1);
+      color: var(--overlay0);
+      font-size: 0.7rem;
     }
 
-    footer code {
-      color: var(--accent);
-    }
-
-    /* Divider */
-    .divider {
-      height: 1px;
-      background: var(--border);
-      margin: 3rem 0;
-    }
-
-    /* Tmux section styling */
-    .tmux-section .section-title::before {
-      content: 'tmux';
-      background: var(--accent);
-      color: var(--bg);
-      padding: 0.15rem 0.4rem;
-      margin-right: 0.75rem;
+    /* Full width section */
+    .full-width {
+      grid-column: 1 / -1;
     }
   </style>
 </head>
 <body>
-  <header>
-    <h1>Vim <span>&</span> Tmux</h1>
-    <p class="tagline">Quick Reference</p>
-  </header>
+  <div class="container">
+    <header>
+      <h1>Vim & Tmux Reference</h1>
+      <p class="subtitle">Catppuccin Macchiato</p>
+    </header>
 
-  <nav>
-    <a href="#core">Core</a>
-    <a href="#motions">Motions</a>
-    <a href="#objects">Objects</a>
-    <a href="#combos">Combos</a>
-    <a href="#nvchad">NVChad</a>
-    <a href="#tmux">Tmux</a>
-  </nav>
+    <div class="formula">
+      <span class="hl">verb</span><span class="op">+</span><span class="hl">motion</span><span class="op">=</span><span class="hl">action</span>
+      &nbsp;&nbsp;
+      <span style="color: var(--subtext0)">examples:</span>
+      <kbd style="color: var(--green)">dw</kbd> <span style="color: var(--subtext0)">delete word</span>
+      <kbd style="color: var(--green)">ci"</kbd> <span style="color: var(--subtext0)">change in quotes</span>
+      <kbd style="color: var(--green)">y$</kbd> <span style="color: var(--subtext0)">yank to EOL</span>
+    </div>
 
-  <main>
-    <!-- The Grammar -->
-    <section class="section" id="core">
-      <h2 class="section-title" data-num="01">The Grammar</h2>
-
-      <div class="formula">
-        <span class="hl">verb</span>
-        <span class="op">+</span>
-        <span class="hl">motion</span>
-        <span class="op">=</span>
-        <span class="hl">action</span>
-      </div>
-
-      <div class="cols-2">
-        <div class="block">
-          <h3 class="block-title">Verbs</h3>
-          <table>
-            <tr><td><kbd>d</kbd></td><td class="desc">Delete</td></tr>
-            <tr><td><kbd>c</kbd></td><td class="desc">Change (delete + insert)</td></tr>
-            <tr><td><kbd>y</kbd></td><td class="desc">Yank (copy)</td></tr>
-            <tr><td><kbd>v</kbd></td><td class="desc">Visual select</td></tr>
-            <tr><td><kbd>></kbd> / <kbd><</kbd></td><td class="desc">Indent / Unindent</td></tr>
-            <tr><td><kbd>gu</kbd> / <kbd>gU</kbd></td><td class="desc">Lowercase / Uppercase</td></tr>
-          </table>
-        </div>
-
-        <div class="block">
-          <h3 class="block-title">Examples</h3>
-          <div class="example">
-            <code>d</code> + <code>w</code> <span class="arrow">=</span> <span class="result">delete word</span>
+    <div class="cols">
+      <div>
+        <section>
+          <h2>Verbs (Actions)</h2>
+          <div class="list">
+            <kbd>d</kbd><span>delete (and copy to register)</span>
+            <kbd>c</kbd><span>change (delete + insert mode)</span>
+            <kbd>y</kbd><span>yank (copy)</span>
+            <kbd>v</kbd><span>visual select</span>
+            <kbd>> / <</kbd><span>indent right / left</span>
+            <kbd>gu / gU</kbd><span>lowercase / uppercase</span>
           </div>
-          <div class="example">
-            <code>c</code> + <code>i"</code> <span class="arrow">=</span> <span class="result">change inside quotes</span>
+          <div class="note">Double verb acts on line: <kbd>dd</kbd> <kbd>yy</kbd> <kbd>cc</kbd></div>
+        </section>
+
+        <section>
+          <h2>Motions — Horizontal</h2>
+          <div class="list">
+            <kbd>w / b</kbd><span>next / prev word</span>
+            <kbd>e</kbd><span>end of word</span>
+            <kbd>0 / $</kbd><span>line start / end</span>
+            <kbd>^</kbd><span>first non-blank char</span>
+            <kbd>f{x} / t{x}</kbd><span>find / til character</span>
+            <kbd>; / ,</kbd><span>repeat f/t forward / back</span>
           </div>
-          <div class="example">
-            <code>y</code> + <code>$</code> <span class="arrow">=</span> <span class="result">yank to end of line</span>
+        </section>
+
+        <section>
+          <h2>Motions — Vertical</h2>
+          <div class="list">
+            <kbd>j / k</kbd><span>down / up</span>
+            <kbd>{ / }</kbd><span>prev / next paragraph</span>
+            <kbd>gg / G</kbd><span>file top / bottom</span>
+            <kbd>Ctrl+d / Ctrl+u</kbd><span>half page down / up</span>
+            <kbd>%</kbd><span>matching bracket</span>
+            <kbd>H / M / L</kbd><span>screen top / middle / bottom</span>
           </div>
-          <div class="example">
-            <code>></code> + <code>5j</code> <span class="arrow">=</span> <span class="result">indent 5 lines down</span>
+        </section>
+
+        <section>
+          <h2>Text Objects</h2>
+          <div class="note" style="margin-bottom: 0.4rem; margin-top: 0;">Use with <kbd>i</kbd> (inside) or <kbd>a</kbd> (around)</div>
+          <div class="list">
+            <kbd>w / s / p</kbd><span>word / sentence / paragraph</span>
+            <kbd>" ' `</kbd><span>quotes</span>
+            <kbd>( ) b</kbd><span>parentheses</span>
+            <kbd>{ } B</kbd><span>braces</span>
+            <kbd>[ ]</kbd><span>brackets</span>
+            <kbd>< ></kbd><span>angle brackets</span>
+            <kbd>t</kbd><span>HTML/JSX tag</span>
           </div>
-          <p class="note"><strong>Tip:</strong> Double a verb to act on the line: <kbd>dd</kbd> <kbd>yy</kbd> <kbd>cc</kbd></p>
-        </div>
-      </div>
-    </section>
+        </section>
 
-    <!-- Motions -->
-    <section class="section" id="motions">
-      <h2 class="section-title" data-num="02">Motions</h2>
-      <div class="cols-3">
-        <div class="block">
-          <h3 class="block-title">Horizontal</h3>
-          <table>
-            <tr><td><kbd>w</kbd> / <kbd>b</kbd></td><td class="desc">Next / prev word</td></tr>
-            <tr><td><kbd>e</kbd></td><td class="desc">End of word</td></tr>
-            <tr><td><kbd>0</kbd> / <kbd>$</kbd></td><td class="desc">Start / end of line</td></tr>
-            <tr><td><kbd>^</kbd></td><td class="desc">First non-blank</td></tr>
-            <tr><td><kbd>f</kbd><em>x</em> / <kbd>t</kbd><em>x</em></td><td class="desc">Find / til char</td></tr>
-          </table>
-        </div>
+        <section>
+          <h2>With Counts (Relative Numbers)</h2>
+          <div class="list">
+            <kbd>5j / 12k</kbd><span>5 down / 12 up</span>
+            <kbd>d8j / d5k</kbd><span>delete 8 down / 5 up</span>
+            <kbd>y12j</kbd><span>yank 12 lines down</span>
+            <kbd>c7j</kbd><span>change 7 lines down</span>
+            <kbd>>5j / <3k</kbd><span>indent 5 down / unindent 3 up</span>
+            <kbd>V8j</kbd><span>visual select 8 lines down</span>
+            <kbd>=8j</kbd><span>auto-indent 8 lines</span>
+          </div>
+        </section>
 
-        <div class="block">
-          <h3 class="block-title">Vertical</h3>
-          <table>
-            <tr><td><kbd>j</kbd> / <kbd>k</kbd></td><td class="desc">Down / up</td></tr>
-            <tr><td><kbd>{</kbd> / <kbd>}</kbd></td><td class="desc">Prev / next paragraph</td></tr>
-            <tr><td><kbd>gg</kbd> / <kbd>G</kbd></td><td class="desc">Top / bottom of file</td></tr>
-            <tr><td><kbd>Ctrl+d</kbd> / <kbd>Ctrl+u</kbd></td><td class="desc">Half page down / up</td></tr>
-            <tr><td><kbd>%</kbd></td><td class="desc">Matching bracket</td></tr>
-          </table>
-        </div>
+        <section>
+          <h2>Modes</h2>
+          <div class="list">
+            <kbd>Esc</kbd><span>normal mode</span>
+            <kbd>i / a</kbd><span>insert before / after cursor</span>
+            <kbd>I / A</kbd><span>insert at line start / end</span>
+            <kbd>o / O</kbd><span>new line below / above</span>
+            <kbd>v / V / Ctrl+v</kbd><span>visual / line / block</span>
+            <kbd>:</kbd><span>command mode</span>
+            <kbd>R</kbd><span>replace mode</span>
+          </div>
+        </section>
 
-        <div class="block">
-          <h3 class="block-title">With Counts</h3>
-          <table>
-            <tr><td><kbd>5j</kbd></td><td class="desc">5 lines down</td></tr>
-            <tr><td><kbd>12k</kbd></td><td class="desc">12 lines up</td></tr>
-            <tr><td><kbd>d8j</kbd></td><td class="desc">Delete 8 lines down</td></tr>
-            <tr><td><kbd>y5k</kbd></td><td class="desc">Yank 5 lines up</td></tr>
-            <tr><td><kbd>>3j</kbd></td><td class="desc">Indent 3 lines</td></tr>
-          </table>
-        </div>
-      </div>
-    </section>
-
-    <!-- Text Objects -->
-    <section class="section" id="objects">
-      <h2 class="section-title" data-num="03">Text Objects</h2>
-      <p style="color: var(--text-dim); margin-bottom: 1.5rem;">Use <kbd>i</kbd> (inside) or <kbd>a</kbd> (around) with these:</p>
-      <div class="cols-4">
-        <div class="block">
-          <table>
-            <tr><td><kbd>w</kbd></td><td class="desc">Word</td></tr>
-            <tr><td><kbd>s</kbd></td><td class="desc">Sentence</td></tr>
-            <tr><td><kbd>p</kbd></td><td class="desc">Paragraph</td></tr>
-          </table>
-        </div>
-        <div class="block">
-          <table>
-            <tr><td><kbd>"</kbd> <kbd>'</kbd> <kbd>`</kbd></td><td class="desc">Quotes</td></tr>
-            <tr><td><kbd>(</kbd> / <kbd>b</kbd></td><td class="desc">Parentheses</td></tr>
-            <tr><td><kbd>{</kbd> / <kbd>B</kbd></td><td class="desc">Braces</td></tr>
-          </table>
-        </div>
-        <div class="block">
-          <table>
-            <tr><td><kbd>[</kbd></td><td class="desc">Brackets</td></tr>
-            <tr><td><kbd><</kbd></td><td class="desc">Angle brackets</td></tr>
-            <tr><td><kbd>t</kbd></td><td class="desc">HTML/JSX tag</td></tr>
-          </table>
-        </div>
-        <div class="block">
-          <h3 class="block-title" style="margin-top: 0;">Common combos</h3>
-          <table>
-            <tr><td><kbd>ciw</kbd></td><td class="desc">Change word</td></tr>
-            <tr><td><kbd>di"</kbd></td><td class="desc">Delete in quotes</td></tr>
-            <tr><td><kbd>ya{</kbd></td><td class="desc">Yank around braces</td></tr>
-          </table>
-        </div>
-      </div>
-    </section>
-
-    <!-- The Matrix -->
-    <section class="section">
-      <h2 class="section-title" data-num="04">Combination Matrix</h2>
-      <div class="matrix">
-        <table>
-          <thead>
-            <tr>
-              <th></th>
-              <th>w</th>
-              <th>iw</th>
-              <th>$</th>
-              <th>i"</th>
-              <th>i{</th>
-              <th>it</th>
-              <th>5j</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><kbd>d</kbd></td>
-              <td><kbd>dw</kbd><span class="sub">to next word</span></td>
-              <td><kbd>diw</kbd><span class="sub">word</span></td>
-              <td><kbd>d$</kbd><span class="sub">to EOL</span></td>
-              <td><kbd>di"</kbd><span class="sub">in quotes</span></td>
-              <td><kbd>di{</kbd><span class="sub">in braces</span></td>
-              <td><kbd>dit</kbd><span class="sub">in tag</span></td>
-              <td><kbd>d5j</kbd><span class="sub">5 lines</span></td>
-            </tr>
-            <tr>
-              <td><kbd>c</kbd></td>
-              <td><kbd>cw</kbd><span class="sub">to next word</span></td>
-              <td><kbd>ciw</kbd><span class="sub">word</span></td>
-              <td><kbd>c$</kbd><span class="sub">to EOL</span></td>
-              <td><kbd>ci"</kbd><span class="sub">in quotes</span></td>
-              <td><kbd>ci{</kbd><span class="sub">in braces</span></td>
-              <td><kbd>cit</kbd><span class="sub">in tag</span></td>
-              <td><kbd>c5j</kbd><span class="sub">5 lines</span></td>
-            </tr>
-            <tr>
-              <td><kbd>y</kbd></td>
-              <td><kbd>yw</kbd><span class="sub">to next word</span></td>
-              <td><kbd>yiw</kbd><span class="sub">word</span></td>
-              <td><kbd>y$</kbd><span class="sub">to EOL</span></td>
-              <td><kbd>yi"</kbd><span class="sub">in quotes</span></td>
-              <td><kbd>yi{</kbd><span class="sub">in braces</span></td>
-              <td><kbd>yit</kbd><span class="sub">in tag</span></td>
-              <td><kbd>y5j</kbd><span class="sub">5 lines</span></td>
-            </tr>
-            <tr>
-              <td><kbd>v</kbd></td>
-              <td><kbd>vw</kbd><span class="sub">to next word</span></td>
-              <td><kbd>viw</kbd><span class="sub">word</span></td>
-              <td><kbd>v$</kbd><span class="sub">to EOL</span></td>
-              <td><kbd>vi"</kbd><span class="sub">in quotes</span></td>
-              <td><kbd>vi{</kbd><span class="sub">in braces</span></td>
-              <td><kbd>vit</kbd><span class="sub">in tag</span></td>
-              <td><kbd>v5j</kbd><span class="sub">5 lines</span></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <p class="note"><strong>The math:</strong> 6 verbs × 10 motions = 60 commands. Add i/a variants = 120. Add counts = infinite.</p>
-    </section>
-
-    <!-- Power Combos -->
-    <section class="section" id="combos">
-      <h2 class="section-title" data-num="05">Power Combos</h2>
-      <div class="cmd-grid">
-        <div class="cmd-item"><kbd>ciw</kbd><span class="desc">Change word</span></div>
-        <div class="cmd-item"><kbd>ci"</kbd><span class="desc">Change in quotes</span></div>
-        <div class="cmd-item"><kbd>ci(</kbd><span class="desc">Change in parens</span></div>
-        <div class="cmd-item"><kbd>ca{</kbd><span class="desc">Change around braces</span></div>
-        <div class="cmd-item"><kbd>dit</kbd><span class="desc">Delete in tag</span></div>
-        <div class="cmd-item"><kbd>dat</kbd><span class="desc">Delete around tag</span></div>
-        <div class="cmd-item"><kbd>yiw</kbd><span class="desc">Yank word</span></div>
-        <div class="cmd-item"><kbd>yi"</kbd><span class="desc">Yank in quotes</span></div>
-        <div class="cmd-item"><kbd>vip</kbd><span class="desc">Select paragraph</span></div>
-        <div class="cmd-item"><kbd>yyp</kbd><span class="desc">Duplicate line</span></div>
-        <div class="cmd-item"><kbd>ddp</kbd><span class="desc">Move line down</span></div>
-        <div class="cmd-item"><kbd>xp</kbd><span class="desc">Swap chars</span></div>
-        <div class="cmd-item"><kbd>ea</kbd><span class="desc">Append at word end</span></div>
-        <div class="cmd-item"><kbd>*</kbd><span class="desc">Search word at cursor</span></div>
-        <div class="cmd-item"><kbd>.</kbd><span class="desc">Repeat last change</span></div>
-        <div class="cmd-item"><kbd>cgn</kbd><span class="desc">Change next match</span></div>
-      </div>
-      <p class="note"><strong>Pro tip:</strong> <kbd>.</kbd> repeats your last change. <kbd>*</kbd> + <kbd>cgn</kbd> + <kbd>.</kbd> = multi-cursor replacement.</p>
-    </section>
-
-    <!-- Modes -->
-    <section class="section">
-      <h2 class="section-title" data-num="06">Modes & Search</h2>
-      <div class="cols-2">
-        <div class="block">
-          <h3 class="block-title">Entering Modes</h3>
-          <table>
-            <tr><td><kbd>Esc</kbd></td><td class="desc">Normal mode</td></tr>
-            <tr><td><kbd>i</kbd> / <kbd>a</kbd></td><td class="desc">Insert before / after cursor</td></tr>
-            <tr><td><kbd>I</kbd> / <kbd>A</kbd></td><td class="desc">Insert at line start / end</td></tr>
-            <tr><td><kbd>o</kbd> / <kbd>O</kbd></td><td class="desc">New line below / above</td></tr>
-            <tr><td><kbd>v</kbd> / <kbd>V</kbd> / <kbd>Ctrl+v</kbd></td><td class="desc">Visual / line / block</td></tr>
-            <tr><td><kbd>:</kbd></td><td class="desc">Command mode</td></tr>
-          </table>
-        </div>
-
-        <div class="block">
-          <h3 class="block-title">Search & Replace</h3>
-          <table>
-            <tr><td><kbd>/pattern</kbd></td><td class="desc">Search forward</td></tr>
-            <tr><td><kbd>?pattern</kbd></td><td class="desc">Search backward</td></tr>
-            <tr><td><kbd>n</kbd> / <kbd>N</kbd></td><td class="desc">Next / prev match</td></tr>
-            <tr><td><kbd>*</kbd> / <kbd>#</kbd></td><td class="desc">Search word at cursor</td></tr>
-            <tr><td><kbd>:%s/old/new/g</kbd></td><td class="desc">Replace all in file</td></tr>
-            <tr><td><kbd>:%s/old/new/gc</kbd></td><td class="desc">Replace with confirm</td></tr>
-          </table>
-        </div>
-      </div>
-    </section>
-
-    <!-- NVChad -->
-    <section class="section" id="nvchad">
-      <h2 class="section-title" data-num="07">NVChad / LSP</h2>
-      <p style="color: var(--text-dim); margin-bottom: 1.5rem;">Leader = <kbd class="dim">Space</kbd></p>
-      <div class="cols-3">
-        <div class="block">
-          <h3 class="block-title">Find</h3>
-          <table>
-            <tr><td><kbd>leader</kbd><kbd>ff</kbd></td><td class="desc">Find files</td></tr>
-            <tr><td><kbd>leader</kbd><kbd>fw</kbd></td><td class="desc">Live grep</td></tr>
-            <tr><td><kbd>leader</kbd><kbd>fb</kbd></td><td class="desc">Buffers</td></tr>
-            <tr><td><kbd>leader</kbd><kbd>fo</kbd></td><td class="desc">Recent files</td></tr>
-            <tr><td><kbd>leader</kbd><kbd>e</kbd></td><td class="desc">File explorer</td></tr>
-          </table>
-        </div>
-
-        <div class="block">
-          <h3 class="block-title">LSP</h3>
-          <table>
-            <tr><td><kbd>gd</kbd></td><td class="desc">Go to definition</td></tr>
-            <tr><td><kbd>gr</kbd></td><td class="desc">Go to references</td></tr>
-            <tr><td><kbd>K</kbd></td><td class="desc">Hover docs</td></tr>
-            <tr><td><kbd>leader</kbd><kbd>ca</kbd></td><td class="desc">Code actions</td></tr>
-            <tr><td><kbd>leader</kbd><kbd>ra</kbd></td><td class="desc">Rename symbol</td></tr>
-          </table>
-        </div>
-
-        <div class="block">
-          <h3 class="block-title">TypeScript</h3>
-          <table>
-            <tr><td><kbd>leader</kbd><kbd>i</kbd></td><td class="desc">Auto import</td></tr>
-            <tr><td><kbd>leader</kbd><kbd>ai</kbd></td><td class="desc">Add all imports</td></tr>
-            <tr><td><kbd>leader</kbd><kbd>oi</kbd></td><td class="desc">Organize imports</td></tr>
-            <tr><td><kbd>leader</kbd><kbd>fm</kbd></td><td class="desc">Format (Prettier)</td></tr>
-            <tr><td><kbd>[d</kbd> / <kbd>]d</kbd></td><td class="desc">Prev / next error</td></tr>
-          </table>
-        </div>
+        <section>
+          <h2>Search & Replace</h2>
+          <div class="list">
+            <kbd>/pattern</kbd><span>search forward</span>
+            <kbd>?pattern</kbd><span>search backward</span>
+            <kbd>n / N</kbd><span>next / prev match</span>
+            <kbd>* / #</kbd><span>search word forward / back</span>
+            <kbd>:s/a/b</kbd><span>replace first on line</span>
+            <kbd>:s/a/b/g</kbd><span>replace all on line</span>
+            <kbd>:%s/a/b/g</kbd><span>replace all in file</span>
+            <kbd>:%s/a/b/gc</kbd><span>replace with confirm</span>
+          </div>
+          <div class="note"><kbd>*</kbd> then <kbd>cgn</kbd> then <kbd>.</kbd> = multi-cursor</div>
+        </section>
       </div>
 
-      <div class="block" style="margin-top: 2rem;">
-        <h3 class="block-title">NvimTree (File Explorer)</h3>
-        <div class="cmd-grid">
-          <div class="cmd-item"><kbd>a</kbd><span class="desc">Create file/folder</span></div>
-          <div class="cmd-item"><kbd>d</kbd><span class="desc">Delete</span></div>
-          <div class="cmd-item"><kbd>r</kbd><span class="desc">Rename</span></div>
-          <div class="cmd-item"><kbd>x</kbd><span class="desc">Cut</span></div>
-          <div class="cmd-item"><kbd>c</kbd><span class="desc">Copy</span></div>
-          <div class="cmd-item"><kbd>p</kbd><span class="desc">Paste</span></div>
-          <div class="cmd-item"><kbd>y</kbd><span class="desc">Copy name</span></div>
-          <div class="cmd-item"><kbd>Y</kbd><span class="desc">Copy path</span></div>
-          <div class="cmd-item"><kbd>H</kbd><span class="desc">Toggle hidden</span></div>
-          <div class="cmd-item"><kbd>R</kbd><span class="desc">Refresh</span></div>
-        </div>
+      <div>
+        <section>
+          <h2>Power Combos</h2>
+          <div class="list-alt">
+            <div class="item"><kbd>ciw</kbd><span>change word</span></div>
+            <div class="item"><kbd>ci"</kbd><span>change inside quotes</span></div>
+            <div class="item"><kbd>ci( / ci{</kbd><span>change inside parens / braces</span></div>
+            <div class="item"><kbd>ca{</kbd><span>change around braces</span></div>
+            <div class="item"><kbd>dit / dat</kbd><span>delete inside / around tag</span></div>
+            <div class="item"><kbd>yiw / yi"</kbd><span>yank word / in quotes</span></div>
+            <div class="item"><kbd>vip / vat</kbd><span>select paragraph / around tag</span></div>
+            <div class="item"><kbd>yyp</kbd><span>duplicate line</span></div>
+            <div class="item"><kbd>ddp / ddkP</kbd><span>move line down / up</span></div>
+            <div class="item"><kbd>xp</kbd><span>swap two characters</span></div>
+            <div class="item"><kbd>ea</kbd><span>append at end of word</span></div>
+            <div class="item"><kbd>*</kbd><span>search word under cursor</span></div>
+            <div class="item"><kbd>.</kbd><span>repeat last change</span></div>
+            <div class="item"><kbd>cgn</kbd><span>change next match</span></div>
+            <div class="item"><kbd>gcc / gc</kbd><span>comment line / selection</span></div>
+          </div>
+        </section>
+
+        <section>
+          <h2>NVChad — leader = Space</h2>
+          <div class="list">
+            <kbd>&lt;leader&gt;ff</kbd><span>find files</span>
+            <kbd>&lt;leader&gt;fw</kbd><span>live grep</span>
+            <kbd>&lt;leader&gt;fb</kbd><span>buffers</span>
+            <kbd>&lt;leader&gt;fo</kbd><span>recent files</span>
+            <kbd>&lt;leader&gt;e</kbd><span>file explorer</span>
+            <kbd>&lt;leader&gt;x</kbd><span>close buffer</span>
+            <kbd>&lt;leader&gt;n</kbd><span>toggle line numbers</span>
+            <kbd>&lt;leader&gt;th</kbd><span>theme picker</span>
+            <kbd>&lt;leader&gt;ch</kbd><span>cheatsheet</span>
+            <kbd>Tab / S-Tab</kbd><span>next / prev buffer</span>
+            <kbd>Ctrl+h/j/k/l</kbd><span>navigate splits</span>
+          </div>
+        </section>
+
+        <section>
+          <h2>LSP & TypeScript</h2>
+          <div class="list">
+            <kbd>gd</kbd><span>go to definition</span>
+            <kbd>gr</kbd><span>go to references</span>
+            <kbd>K</kbd><span>hover docs</span>
+            <kbd>&lt;leader&gt;ca</kbd><span>code actions</span>
+            <kbd>&lt;leader&gt;ra</kbd><span>rename symbol</span>
+            <kbd>&lt;leader&gt;fm</kbd><span>format (Prettier)</span>
+            <kbd>[d / ]d</kbd><span>prev / next diagnostic</span>
+            <kbd>&lt;leader&gt;i</kbd><span>auto import</span>
+            <kbd>&lt;leader&gt;ai</kbd><span>add all missing imports</span>
+            <kbd>&lt;leader&gt;oi</kbd><span>organize imports</span>
+            <kbd>&lt;leader&gt;lf</kbd><span>ESLint fix all</span>
+          </div>
+        </section>
+
+        <section>
+          <h2>NvimTree (File Explorer)</h2>
+          <div class="note" style="margin-bottom: 0.4rem; margin-top: 0;">Open with <kbd>&lt;leader&gt;e</kbd></div>
+          <div class="list">
+            <kbd>a</kbd><span>create file (add / for folder)</span>
+            <kbd>d</kbd><span>delete</span>
+            <kbd>r</kbd><span>rename</span>
+            <kbd>x / c / p</kbd><span>cut / copy / paste</span>
+            <kbd>y / Y / gy</kbd><span>copy name / rel path / abs path</span>
+            <kbd>H / I</kbd><span>toggle hidden / gitignored</span>
+            <kbd>R</kbd><span>refresh</span>
+          </div>
+        </section>
       </div>
-    </section>
+    </div>
 
     <div class="divider"></div>
 
-    <!-- TMUX -->
-    <section class="section tmux-section" id="tmux">
-      <h2 class="section-title">Terminal Multiplexer</h2>
-      <p style="color: var(--text-dim); margin-bottom: 1.5rem;">Prefix = <kbd class="dim">Ctrl+a</kbd></p>
+    <div class="tmux-header">tmux — prefix = Ctrl+a</div>
 
-      <div class="cols-2" style="margin-bottom: 2rem;">
-        <div class="block">
-          <h3 class="block-title">Shell Commands</h3>
-          <table>
-            <tr><td><kbd class="dim">tmux</kbd></td><td class="desc">Start new session</td></tr>
-            <tr><td><kbd class="dim">tmux new -s name</kbd></td><td class="desc">Named session</td></tr>
-            <tr><td><kbd class="dim">tmux ls</kbd></td><td class="desc">List sessions</td></tr>
-            <tr><td><kbd class="dim">tmux a</kbd></td><td class="desc">Attach to last</td></tr>
-            <tr><td><kbd class="dim">tmux a -t name</kbd></td><td class="desc">Attach to named</td></tr>
-            <tr><td><kbd class="dim">tmux kill-session -t x</kbd></td><td class="desc">Kill session</td></tr>
-          </table>
-        </div>
+    <div class="cols">
+      <div>
+        <section>
+          <h2>Shell Commands</h2>
+          <div class="list">
+            <kbd>tmux</kbd><span>start new session</span>
+            <kbd>tmux new -s name</kbd><span>start named session</span>
+            <kbd>tmux ls</kbd><span>list sessions</span>
+            <kbd>tmux a</kbd><span>attach to last</span>
+            <kbd>tmux a -t name</kbd><span>attach to named</span>
+            <kbd>tmux kill-session -t x</kbd><span>kill session</span>
+          </div>
+        </section>
 
-        <div class="block">
-          <h3 class="block-title">Sessions</h3>
-          <table>
-            <tr><td><kbd>d</kbd></td><td class="desc">Detach</td></tr>
-            <tr><td><kbd>$</kbd></td><td class="desc">Rename session</td></tr>
-            <tr><td><kbd>s</kbd></td><td class="desc">List/switch sessions</td></tr>
-            <tr><td><kbd>Ctrl+s</kbd></td><td class="desc">Save (resurrect)</td></tr>
-            <tr><td><kbd>Ctrl+r</kbd></td><td class="desc">Restore (resurrect)</td></tr>
-          </table>
-        </div>
+        <section>
+          <h2>Sessions (prefix +)</h2>
+          <div class="list">
+            <kbd>d</kbd><span>detach</span>
+            <kbd>$</kbd><span>rename session</span>
+            <kbd>s</kbd><span>list/switch sessions</span>
+            <kbd>Ctrl+s</kbd><span>save (resurrect)</span>
+            <kbd>Ctrl+r</kbd><span>restore (resurrect)</span>
+          </div>
+          <div class="note">Auto-saves every 10 min via continuum</div>
+        </section>
+
+        <section>
+          <h2>Windows (prefix +)</h2>
+          <div class="list">
+            <kbd>c</kbd><span>new window</span>
+            <kbd>n / p</kbd><span>next / prev</span>
+            <kbd>0-9</kbd><span>go to window #</span>
+            <kbd>,</kbd><span>rename</span>
+            <kbd>&</kbd><span>close window</span>
+            <kbd>< / ></kbd><span>swap left / right</span>
+          </div>
+          <div class="note">No prefix: <kbd>Ctrl+h</kbd> / <kbd>Ctrl+l</kbd> for prev/next</div>
+        </section>
       </div>
 
-      <div class="cols-3">
-        <div class="block">
-          <h3 class="block-title">Windows</h3>
-          <table>
-            <tr><td><kbd>c</kbd></td><td class="desc">New window</td></tr>
-            <tr><td><kbd>n</kbd> / <kbd>p</kbd></td><td class="desc">Next / prev</td></tr>
-            <tr><td><kbd>0-9</kbd></td><td class="desc">Go to window #</td></tr>
-            <tr><td><kbd>,</kbd></td><td class="desc">Rename window</td></tr>
-            <tr><td><kbd>&</kbd></td><td class="desc">Close window</td></tr>
-            <tr><td><kbd><</kbd> / <kbd>></kbd></td><td class="desc">Swap left / right</td></tr>
-          </table>
-          <p class="note">No prefix: <kbd class="dim">Ctrl+h</kbd> / <kbd class="dim">Ctrl+l</kbd></p>
-        </div>
+      <div>
+        <section>
+          <h2>Panes (prefix +)</h2>
+          <div class="list">
+            <kbd>|</kbd><span>split vertical</span>
+            <kbd>-</kbd><span>split horizontal</span>
+            <kbd>h j k l</kbd><span>navigate (vim-style)</span>
+            <kbd>H J K L</kbd><span>resize</span>
+            <kbd>z</kbd><span>zoom (fullscreen)</span>
+            <kbd>x</kbd><span>close pane</span>
+            <kbd>Space</kbd><span>cycle layouts</span>
+            <kbd>{ / }</kbd><span>swap pane position</span>
+          </div>
+        </section>
 
-        <div class="block">
-          <h3 class="block-title">Panes</h3>
-          <table>
-            <tr><td><kbd>|</kbd></td><td class="desc">Split vertical</td></tr>
-            <tr><td><kbd>-</kbd></td><td class="desc">Split horizontal</td></tr>
-            <tr><td><kbd>h</kbd><kbd>j</kbd><kbd>k</kbd><kbd>l</kbd></td><td class="desc">Navigate</td></tr>
-            <tr><td><kbd>H</kbd><kbd>J</kbd><kbd>K</kbd><kbd>L</kbd></td><td class="desc">Resize</td></tr>
-            <tr><td><kbd>z</kbd></td><td class="desc">Zoom (fullscreen)</td></tr>
-            <tr><td><kbd>x</kbd></td><td class="desc">Close pane</td></tr>
-          </table>
-        </div>
+        <section>
+          <h2>Copy Mode (prefix +)</h2>
+          <div class="list">
+            <kbd>[</kbd><span>enter copy mode</span>
+            <kbd>v</kbd><span>start selection</span>
+            <kbd>y</kbd><span>copy selection</span>
+            <kbd>]</kbd><span>paste</span>
+            <kbd>Escape</kbd><span>exit copy mode</span>
+          </div>
+          <div class="note">Uses vim keys: <kbd>h j k l</kbd> to move, <kbd>/</kbd> to search</div>
+        </section>
 
-        <div class="block">
-          <h3 class="block-title">Copy & Plugins</h3>
-          <table>
-            <tr><td><kbd>[</kbd></td><td class="desc">Enter copy mode</td></tr>
-            <tr><td><kbd>v</kbd></td><td class="desc">Start selection</td></tr>
-            <tr><td><kbd>y</kbd></td><td class="desc">Copy</td></tr>
-            <tr><td><kbd>]</kbd></td><td class="desc">Paste</td></tr>
-            <tr><td><kbd>I</kbd></td><td class="desc">Install plugins</td></tr>
-            <tr><td><kbd>r</kbd></td><td class="desc">Reload config</td></tr>
-          </table>
-        </div>
+        <section>
+          <h2>Plugins (prefix +)</h2>
+          <div class="list">
+            <kbd>I</kbd><span>install plugins</span>
+            <kbd>U</kbd><span>update plugins</span>
+            <kbd>r</kbd><span>reload config</span>
+          </div>
+          <div class="note">Plugins: sensible, resurrect, continuum, yank, catppuccin</div>
+        </section>
       </div>
-    </section>
-  </main>
+    </div>
 
-  <footer>
-    <p><code>vimtutor</code> for practice &nbsp;·&nbsp; <code>leader + ch</code> for NVChad cheatsheet</p>
-  </footer>
+    <footer>
+      <kbd>vimtutor</kbd> for practice · <kbd>&lt;leader&gt;ch</kbd> for NVChad cheatsheet · <kbd>~/TMUX_GUIDE.md</kbd>
+    </footer>
+  </div>
 </body>
 </html>
