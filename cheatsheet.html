@@ -3,1275 +3,757 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vim Cheatsheet - Level Up</title>
+  <title>Vim + Tmux Reference</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --bg: #0c0c0c;
+      --surface: #161616;
+      --border: #262626;
+      --text: #e5e5e5;
+      --text-dim: #737373;
+      --accent: #e5a855;
+      --key-bg: #1f1f1f;
+      --key-border: #333;
+    }
+
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
 
-    body {
-      font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
-      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-      color: #e4e4e7;
-      min-height: 100vh;
-      padding: 2rem;
+    html {
+      font-size: 15px;
     }
 
-    .container {
-      max-width: 1400px;
-      margin: 0 auto;
+    body {
+      font-family: 'JetBrains Mono', monospace;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      min-height: 100vh;
+    }
+
+    /* Header */
+    header {
+      border-bottom: 1px solid var(--border);
+      padding: 3rem 2rem 2rem;
+      text-align: center;
     }
 
     h1 {
-      text-align: center;
-      font-size: 3rem;
-      margin-bottom: 0.5rem;
-      background: linear-gradient(90deg, #f472b6, #c084fc, #60a5fa);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      font-family: 'Newsreader', serif;
+      font-size: 2.5rem;
+      font-weight: 400;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.25rem;
     }
 
-    .subtitle {
-      text-align: center;
-      color: #a1a1aa;
-      margin-bottom: 3rem;
-      font-size: 1.1rem;
+    h1 span {
+      color: var(--accent);
     }
 
-    .grid {
+    .tagline {
+      color: var(--text-dim);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+    }
+
+    /* Navigation */
+    nav {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      padding: 1rem 2rem;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      background: var(--bg);
+      z-index: 100;
+    }
+
+    nav a {
+      color: var(--text-dim);
+      text-decoration: none;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      transition: color 0.15s;
+    }
+
+    nav a:hover {
+      color: var(--accent);
+    }
+
+    /* Main layout */
+    main {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    /* Section */
+    .section {
+      margin-bottom: 4rem;
+    }
+
+    .section-title {
+      font-family: 'Newsreader', serif;
+      font-size: 1.5rem;
+      font-weight: 400;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section-title::before {
+      content: attr(data-num);
+      color: var(--accent);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      margin-right: 0.75rem;
+      vertical-align: middle;
+    }
+
+    /* Grid layouts */
+    .cols-2 {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      grid-template-columns: repeat(2, 1fr);
+      gap: 3rem;
+    }
+
+    .cols-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+    }
+
+    .cols-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
       gap: 1.5rem;
     }
 
-    .card {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 16px;
-      padding: 1.5rem;
-      backdrop-filter: blur(10px);
+    @media (max-width: 1200px) {
+      .cols-3, .cols-4 { grid-template-columns: repeat(2, 1fr); }
     }
 
-    .card h2 {
-      font-size: 1.3rem;
+    @media (max-width: 768px) {
+      .cols-2, .cols-3, .cols-4 { grid-template-columns: 1fr; }
+    }
+
+    /* Block */
+    .block {
+      padding: 1.25rem 0;
+    }
+
+    .block-title {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--text-dim);
       margin-bottom: 1rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
     }
 
-    .card h2 .icon {
-      font-size: 1.5rem;
-    }
-
-    .mindset { border-left: 4px solid #f472b6; }
-    .mindset h2 { color: #f472b6; }
-
-    .translation { border-left: 4px solid #60a5fa; }
-    .translation h2 { color: #60a5fa; }
-
-    .motions { border-left: 4px solid #34d399; }
-    .motions h2 { color: #34d399; }
-
-    .combos { border-left: 4px solid #fbbf24; }
-    .combos h2 { color: #fbbf24; }
-
-    .verbs { border-left: 4px solid #c084fc; }
-    .verbs h2 { color: #c084fc; }
-
-    .objects { border-left: 4px solid #fb923c; }
-    .objects h2 { color: #fb923c; }
-
-    .formula {
-      background: rgba(0, 0, 0, 0.3);
-      border-radius: 8px;
-      padding: 1rem;
-      text-align: center;
-      font-size: 1.4rem;
-      margin: 1rem 0;
-    }
-
-    .formula span {
-      color: #c084fc;
-    }
-
-    .formula .plus {
-      color: #a1a1aa;
-      margin: 0 0.5rem;
-    }
-
-    .formula .equals {
-      color: #34d399;
-      margin: 0 0.5rem;
-    }
-
+    /* Table */
     table {
       width: 100%;
       border-collapse: collapse;
     }
 
-    th {
-      text-align: left;
-      padding: 0.5rem;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-      color: #a1a1aa;
-      font-weight: 500;
-      font-size: 0.85rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
+    tr {
+      border-bottom: 1px solid var(--border);
     }
 
-    td {
-      padding: 0.6rem 0.5rem;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    }
-
-    tr:last-child td {
+    tr:last-child {
       border-bottom: none;
     }
 
-    .key {
-      background: rgba(0, 0, 0, 0.4);
-      padding: 0.2rem 0.5rem;
-      border-radius: 4px;
-      font-weight: 600;
-      color: #fbbf24;
-      white-space: nowrap;
+    td {
+      padding: 0.5rem 0;
+      vertical-align: baseline;
     }
 
-    .vim-key {
-      color: #34d399;
+    td:first-child {
+      width: 40%;
+      padding-right: 1rem;
     }
 
     .desc {
-      color: #d4d4d8;
-      font-size: 0.9rem;
+      color: var(--text-dim);
+      font-size: 0.85rem;
     }
 
+    /* Keys */
+    kbd {
+      display: inline-block;
+      background: var(--key-bg);
+      border: 1px solid var(--key-border);
+      border-radius: 3px;
+      padding: 0.15rem 0.4rem;
+      font-family: inherit;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--accent);
+      white-space: nowrap;
+    }
+
+    kbd.dim {
+      color: var(--text);
+    }
+
+    /* Formula */
+    .formula {
+      background: var(--surface);
+      padding: 1.25rem 1.5rem;
+      margin: 1rem 0;
+      font-size: 1.1rem;
+      text-align: center;
+    }
+
+    .formula .op {
+      color: var(--text-dim);
+      margin: 0 0.5rem;
+    }
+
+    .formula .hl {
+      color: var(--accent);
+    }
+
+    /* Examples */
     .example {
-      background: rgba(0, 0, 0, 0.3);
-      border-radius: 8px;
-      padding: 0.8rem 1rem;
-      margin: 0.5rem 0;
-      font-size: 0.95rem;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .example:last-child {
+      border-bottom: none;
     }
 
     .example code {
-      color: #34d399;
-      font-weight: 600;
+      color: var(--accent);
+    }
+
+    .example .arrow {
+      color: var(--text-dim);
+      margin: 0 0.5rem;
     }
 
     .example .result {
-      color: #a1a1aa;
-      margin-left: 0.5rem;
+      color: var(--text-dim);
     }
 
-    .tip {
-      background: rgba(251, 191, 36, 0.1);
-      border: 1px solid rgba(251, 191, 36, 0.3);
-      border-radius: 8px;
-      padding: 1rem;
-      margin-top: 1rem;
-      font-size: 0.9rem;
-    }
-
-    .tip strong {
-      color: #fbbf24;
-    }
-
-    .full-width {
-      grid-column: 1 / -1;
-    }
-
-    .command-grid {
+    /* Compact grid */
+    .cmd-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 0.5rem;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 0.25rem 1.5rem;
     }
 
-    .command-item {
-      background: rgba(0, 0, 0, 0.2);
-      padding: 0.6rem 0.8rem;
-      border-radius: 6px;
+    .cmd-item {
       display: flex;
       justify-content: space-between;
-      align-items: center;
+      align-items: baseline;
+      padding: 0.4rem 0;
+      border-bottom: 1px solid var(--border);
+      gap: 1rem;
     }
 
-    .command-item .key {
-      font-size: 0.95rem;
+    .cmd-item .desc {
+      text-align: right;
     }
 
-    .command-item .desc {
+    /* Matrix table */
+    .matrix {
+      overflow-x: auto;
+      margin: 1rem 0;
+    }
+
+    .matrix table {
+      min-width: 800px;
+    }
+
+    .matrix th {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-dim);
+      font-weight: 500;
+      text-align: left;
+      padding: 0.75rem 0.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .matrix td {
+      padding: 0.6rem 0.5rem;
+      width: auto;
+    }
+
+    .matrix td:first-child {
+      width: auto;
+    }
+
+    .matrix .sub {
+      display: block;
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      margin-top: 0.2rem;
+    }
+
+    /* Note */
+    .note {
+      color: var(--text-dim);
+      font-size: 0.8rem;
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .note strong {
+      color: var(--text);
+    }
+
+    /* Translation table */
+    .translation th {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-dim);
+      font-weight: 500;
+      text-align: left;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .translation td {
+      padding: 0.6rem 0;
+      padding-right: 1rem;
+      width: auto;
+    }
+
+    .translation td:first-child {
+      width: auto;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 2rem;
+      border-top: 1px solid var(--border);
+      color: var(--text-dim);
       font-size: 0.8rem;
     }
 
-    .section-header {
-      text-align: center;
-      margin: 3rem 0 1.5rem;
-      color: #a1a1aa;
-      font-size: 0.9rem;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-    }
-
-    .nvchad-keys {
-      border-left: 4px solid #06b6d4;
-    }
-    .nvchad-keys h2 { color: #06b6d4; }
-
-    footer {
-      text-align: center;
-      margin-top: 3rem;
-      padding-top: 2rem;
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
-      color: #71717a;
-    }
-
     footer code {
-      background: rgba(0, 0, 0, 0.3);
-      padding: 0.2rem 0.5rem;
-      border-radius: 4px;
-      color: #34d399;
+      color: var(--accent);
     }
 
-    .matrix-table td {
-      vertical-align: top;
-      padding: 0.8rem 0.5rem;
+    /* Divider */
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 3rem 0;
     }
 
-    .matrix-desc {
-      display: block;
-      font-size: 0.75rem;
-      color: #a1a1aa;
-      margin-top: 0.3rem;
-      line-height: 1.3;
+    /* Tmux section styling */
+    .tmux-section .section-title::before {
+      content: 'tmux';
+      background: var(--accent);
+      color: var(--bg);
+      padding: 0.15rem 0.4rem;
+      margin-right: 0.75rem;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>VIM CHEATSHEET</h1>
-    <p class="subtitle">WebStorm to Neovim - Level Up Guide</p>
+  <header>
+    <h1>Vim <span>&</span> Tmux</h1>
+    <p class="tagline">Quick Reference</p>
+  </header>
 
-    <div class="grid">
-      <!-- The Mindset -->
-      <div class="card mindset">
-        <h2><span class="icon">🧠</span> The Mindset</h2>
-        <p style="color: #a1a1aa; margin-bottom: 1rem;">Vim is a language. You speak commands to your editor.</p>
+  <nav>
+    <a href="#core">Core</a>
+    <a href="#motions">Motions</a>
+    <a href="#objects">Objects</a>
+    <a href="#combos">Combos</a>
+    <a href="#nvchad">NVChad</a>
+    <a href="#tmux">Tmux</a>
+  </nav>
 
-        <div class="formula">
-          <span>verb</span>
-          <span class="plus">+</span>
-          <span>motion</span>
-          <span class="equals">=</span>
-          <span>action</span>
-        </div>
+  <main>
+    <!-- The Grammar -->
+    <section class="section" id="core">
+      <h2 class="section-title" data-num="01">The Grammar</h2>
 
-        <div class="example">
-          <code>d</code> (delete) + <code>w</code> (word) <span class="result">→ delete word</span>
-        </div>
-        <div class="example">
-          <code>c</code> (change) + <code>i"</code> (inside quotes) <span class="result">→ change inside quotes</span>
-        </div>
-        <div class="example">
-          <code>y</code> (yank) + <code>$</code> (end of line) <span class="result">→ copy to end of line</span>
-        </div>
+      <div class="formula">
+        <span class="hl">verb</span>
+        <span class="op">+</span>
+        <span class="hl">motion</span>
+        <span class="op">=</span>
+        <span class="hl">action</span>
       </div>
 
-      <!-- Verbs -->
-      <div class="card verbs">
-        <h2><span class="icon">⚡</span> Verbs (Actions)</h2>
-        <table>
-          <tr>
-            <td><span class="key vim-key">d</span></td>
-            <td class="desc">Delete (and copy to register)</td>
-          </tr>
-          <tr>
-            <td><span class="key vim-key">c</span></td>
-            <td class="desc">Change (delete and enter insert mode)</td>
-          </tr>
-          <tr>
-            <td><span class="key vim-key">y</span></td>
-            <td class="desc">Yank (copy)</td>
-          </tr>
-          <tr>
-            <td><span class="key vim-key">v</span></td>
-            <td class="desc">Visual select</td>
-          </tr>
-          <tr>
-            <td><span class="key vim-key">></span></td>
-            <td class="desc">Indent right</td>
-          </tr>
-          <tr>
-            <td><span class="key vim-key"><</span></td>
-            <td class="desc">Indent left</td>
-          </tr>
-          <tr>
-            <td><span class="key vim-key">gu</span></td>
-            <td class="desc">Lowercase</td>
-          </tr>
-          <tr>
-            <td><span class="key vim-key">gU</span></td>
-            <td class="desc">Uppercase</td>
-          </tr>
-        </table>
-      </div>
+      <div class="cols-2">
+        <div class="block">
+          <h3 class="block-title">Verbs</h3>
+          <table>
+            <tr><td><kbd>d</kbd></td><td class="desc">Delete</td></tr>
+            <tr><td><kbd>c</kbd></td><td class="desc">Change (delete + insert)</td></tr>
+            <tr><td><kbd>y</kbd></td><td class="desc">Yank (copy)</td></tr>
+            <tr><td><kbd>v</kbd></td><td class="desc">Visual select</td></tr>
+            <tr><td><kbd>></kbd> / <kbd><</kbd></td><td class="desc">Indent / Unindent</td></tr>
+            <tr><td><kbd>gu</kbd> / <kbd>gU</kbd></td><td class="desc">Lowercase / Uppercase</td></tr>
+          </table>
+        </div>
 
-      <!-- Text Objects -->
-      <div class="card objects">
-        <h2><span class="icon">📦</span> Text Objects</h2>
-        <p style="color: #a1a1aa; margin-bottom: 0.8rem; font-size: 0.9rem;">
-          Use with <span class="key vim-key">i</span> (inside) or <span class="key vim-key">a</span> (around)
-        </p>
-        <table>
-          <tr>
-            <td><span class="key vim-key">w</span></td>
-            <td class="desc">Word</td>
-          </tr>
-          <tr>
-            <td><span class="key vim-key">s</span></td>
-            <td class="desc">Sentence</td>
-          </tr>
-          <tr>
-            <td><span class="key vim-key">p</span></td>
-            <td class="desc">Paragraph</td>
-          </tr>
-          <tr>
-            <td><span class="key vim-key">"</span> <span class="key vim-key">'</span> <span class="key vim-key">`</span></td>
-            <td class="desc">Quotes</td>
-          </tr>
-          <tr>
-            <td><span class="key vim-key">(</span> <span class="key vim-key">)</span> <span class="key vim-key">b</span></td>
-            <td class="desc">Parentheses</td>
-          </tr>
-          <tr>
-            <td><span class="key vim-key">{</span> <span class="key vim-key">}</span> <span class="key vim-key">B</span></td>
-            <td class="desc">Braces</td>
-          </tr>
-          <tr>
-            <td><span class="key vim-key">[</span> <span class="key vim-key">]</span></td>
-            <td class="desc">Brackets</td>
-          </tr>
-          <tr>
-            <td><span class="key vim-key">t</span></td>
-            <td class="desc">HTML/JSX Tag</td>
-          </tr>
-        </table>
+        <div class="block">
+          <h3 class="block-title">Examples</h3>
+          <div class="example">
+            <code>d</code> + <code>w</code> <span class="arrow">=</span> <span class="result">delete word</span>
+          </div>
+          <div class="example">
+            <code>c</code> + <code>i"</code> <span class="arrow">=</span> <span class="result">change inside quotes</span>
+          </div>
+          <div class="example">
+            <code>y</code> + <code>$</code> <span class="arrow">=</span> <span class="result">yank to end of line</span>
+          </div>
+          <div class="example">
+            <code>></code> + <code>5j</code> <span class="arrow">=</span> <span class="result">indent 5 lines down</span>
+          </div>
+          <p class="note"><strong>Tip:</strong> Double a verb to act on the line: <kbd>dd</kbd> <kbd>yy</kbd> <kbd>cc</kbd></p>
+        </div>
       </div>
+    </section>
 
-      <!-- Motions -->
-      <div class="card motions">
-        <h2><span class="icon">🚀</span> Motions (Movement)</h2>
-        <table>
-          <tr>
-            <td><span class="key vim-key">w</span> / <span class="key vim-key">b</span></td>
-            <td class="desc">Next / previous word</td>
-          </tr>
-          <tr>
-            <td><span class="key vim-key">e</span></td>
-            <td class="desc">End of word</td>
-          </tr>
-          <tr>
-            <td><span class="key vim-key">0</span> / <span class="key vim-key">$</span></td>
-            <td class="desc">Start / end of line</td>
-          </tr>
-          <tr>
-            <td><span class="key vim-key">^</span></td>
-            <td class="desc">First non-blank char</td>
-          </tr>
-          <tr>
-            <td><span class="key vim-key">f{char}</span></td>
-            <td class="desc">Jump TO character</td>
-          </tr>
-          <tr>
-            <td><span class="key vim-key">t{char}</span></td>
-            <td class="desc">Jump BEFORE character</td>
-          </tr>
-          <tr>
-            <td><span class="key vim-key">%</span></td>
-            <td class="desc">Matching bracket</td>
-          </tr>
-          <tr>
-            <td><span class="key vim-key">{</span> / <span class="key vim-key">}</span></td>
-            <td class="desc">Prev / next paragraph</td>
-          </tr>
-          <tr>
-            <td><span class="key vim-key">gg</span> / <span class="key vim-key">G</span></td>
-            <td class="desc">Top / bottom of file</td>
-          </tr>
-          <tr>
-            <td><span class="key vim-key">Ctrl+d</span> / <span class="key vim-key">Ctrl+u</span></td>
-            <td class="desc">Half page down / up</td>
-          </tr>
-        </table>
+    <!-- Motions -->
+    <section class="section" id="motions">
+      <h2 class="section-title" data-num="02">Motions</h2>
+      <div class="cols-3">
+        <div class="block">
+          <h3 class="block-title">Horizontal</h3>
+          <table>
+            <tr><td><kbd>w</kbd> / <kbd>b</kbd></td><td class="desc">Next / prev word</td></tr>
+            <tr><td><kbd>e</kbd></td><td class="desc">End of word</td></tr>
+            <tr><td><kbd>0</kbd> / <kbd>$</kbd></td><td class="desc">Start / end of line</td></tr>
+            <tr><td><kbd>^</kbd></td><td class="desc">First non-blank</td></tr>
+            <tr><td><kbd>f</kbd><em>x</em> / <kbd>t</kbd><em>x</em></td><td class="desc">Find / til char</td></tr>
+          </table>
+        </div>
+
+        <div class="block">
+          <h3 class="block-title">Vertical</h3>
+          <table>
+            <tr><td><kbd>j</kbd> / <kbd>k</kbd></td><td class="desc">Down / up</td></tr>
+            <tr><td><kbd>{</kbd> / <kbd>}</kbd></td><td class="desc">Prev / next paragraph</td></tr>
+            <tr><td><kbd>gg</kbd> / <kbd>G</kbd></td><td class="desc">Top / bottom of file</td></tr>
+            <tr><td><kbd>Ctrl+d</kbd> / <kbd>Ctrl+u</kbd></td><td class="desc">Half page down / up</td></tr>
+            <tr><td><kbd>%</kbd></td><td class="desc">Matching bracket</td></tr>
+          </table>
+        </div>
+
+        <div class="block">
+          <h3 class="block-title">With Counts</h3>
+          <table>
+            <tr><td><kbd>5j</kbd></td><td class="desc">5 lines down</td></tr>
+            <tr><td><kbd>12k</kbd></td><td class="desc">12 lines up</td></tr>
+            <tr><td><kbd>d8j</kbd></td><td class="desc">Delete 8 lines down</td></tr>
+            <tr><td><kbd>y5k</kbd></td><td class="desc">Yank 5 lines up</td></tr>
+            <tr><td><kbd>>3j</kbd></td><td class="desc">Indent 3 lines</td></tr>
+          </table>
+        </div>
       </div>
+    </section>
 
-      <!-- Relative Line Numbers -->
-      <div class="card" style="border-left: 4px solid #a3e635;">
-        <h2 style="color: #a3e635;"><span class="icon">🔢</span> Relative Line Numbers</h2>
-        <p style="color: #a1a1aa; margin-bottom: 0.8rem; font-size: 0.9rem;">
-          With relative numbers, just look at the line and use that number!
-        </p>
+    <!-- Text Objects -->
+    <section class="section" id="objects">
+      <h2 class="section-title" data-num="03">Text Objects</h2>
+      <p style="color: var(--text-dim); margin-bottom: 1.5rem;">Use <kbd>i</kbd> (inside) or <kbd>a</kbd> (around) with these:</p>
+      <div class="cols-4">
+        <div class="block">
+          <table>
+            <tr><td><kbd>w</kbd></td><td class="desc">Word</td></tr>
+            <tr><td><kbd>s</kbd></td><td class="desc">Sentence</td></tr>
+            <tr><td><kbd>p</kbd></td><td class="desc">Paragraph</td></tr>
+          </table>
+        </div>
+        <div class="block">
+          <table>
+            <tr><td><kbd>"</kbd> <kbd>'</kbd> <kbd>`</kbd></td><td class="desc">Quotes</td></tr>
+            <tr><td><kbd>(</kbd> / <kbd>b</kbd></td><td class="desc">Parentheses</td></tr>
+            <tr><td><kbd>{</kbd> / <kbd>B</kbd></td><td class="desc">Braces</td></tr>
+          </table>
+        </div>
+        <div class="block">
+          <table>
+            <tr><td><kbd>[</kbd></td><td class="desc">Brackets</td></tr>
+            <tr><td><kbd><</kbd></td><td class="desc">Angle brackets</td></tr>
+            <tr><td><kbd>t</kbd></td><td class="desc">HTML/JSX tag</td></tr>
+          </table>
+        </div>
+        <div class="block">
+          <h3 class="block-title" style="margin-top: 0;">Common combos</h3>
+          <table>
+            <tr><td><kbd>ciw</kbd></td><td class="desc">Change word</td></tr>
+            <tr><td><kbd>di"</kbd></td><td class="desc">Delete in quotes</td></tr>
+            <tr><td><kbd>ya{</kbd></td><td class="desc">Yank around braces</td></tr>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- The Matrix -->
+    <section class="section">
+      <h2 class="section-title" data-num="04">Combination Matrix</h2>
+      <div class="matrix">
         <table>
           <thead>
             <tr>
-              <th>Command</th>
-              <th>Action</th>
+              <th></th>
+              <th>w</th>
+              <th>iw</th>
+              <th>$</th>
+              <th>i"</th>
+              <th>i{</th>
+              <th>it</th>
+              <th>5j</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td><span class="key vim-key">5j</span></td>
-              <td class="desc">Jump 5 lines down</td>
+              <td><kbd>d</kbd></td>
+              <td><kbd>dw</kbd><span class="sub">to next word</span></td>
+              <td><kbd>diw</kbd><span class="sub">word</span></td>
+              <td><kbd>d$</kbd><span class="sub">to EOL</span></td>
+              <td><kbd>di"</kbd><span class="sub">in quotes</span></td>
+              <td><kbd>di{</kbd><span class="sub">in braces</span></td>
+              <td><kbd>dit</kbd><span class="sub">in tag</span></td>
+              <td><kbd>d5j</kbd><span class="sub">5 lines</span></td>
             </tr>
             <tr>
-              <td><span class="key vim-key">12k</span></td>
-              <td class="desc">Jump 12 lines up</td>
+              <td><kbd>c</kbd></td>
+              <td><kbd>cw</kbd><span class="sub">to next word</span></td>
+              <td><kbd>ciw</kbd><span class="sub">word</span></td>
+              <td><kbd>c$</kbd><span class="sub">to EOL</span></td>
+              <td><kbd>ci"</kbd><span class="sub">in quotes</span></td>
+              <td><kbd>ci{</kbd><span class="sub">in braces</span></td>
+              <td><kbd>cit</kbd><span class="sub">in tag</span></td>
+              <td><kbd>c5j</kbd><span class="sub">5 lines</span></td>
             </tr>
             <tr>
-              <td><span class="key vim-key">d8j</span></td>
-              <td class="desc">Delete cursor + 8 lines down</td>
+              <td><kbd>y</kbd></td>
+              <td><kbd>yw</kbd><span class="sub">to next word</span></td>
+              <td><kbd>yiw</kbd><span class="sub">word</span></td>
+              <td><kbd>y$</kbd><span class="sub">to EOL</span></td>
+              <td><kbd>yi"</kbd><span class="sub">in quotes</span></td>
+              <td><kbd>yi{</kbd><span class="sub">in braces</span></td>
+              <td><kbd>yit</kbd><span class="sub">in tag</span></td>
+              <td><kbd>y5j</kbd><span class="sub">5 lines</span></td>
             </tr>
             <tr>
-              <td><span class="key vim-key">d5k</span></td>
-              <td class="desc">Delete cursor + 5 lines up</td>
-            </tr>
-            <tr>
-              <td><span class="key vim-key">y12j</span></td>
-              <td class="desc">Yank cursor + 12 lines below</td>
-            </tr>
-            <tr>
-              <td><span class="key vim-key">c7j</span></td>
-              <td class="desc">Change cursor + 7 lines below</td>
-            </tr>
-            <tr>
-              <td><span class="key vim-key">>5j</span></td>
-              <td class="desc">Indent cursor + 5 lines below</td>
-            </tr>
-            <tr>
-              <td><span class="key vim-key"><3k</span></td>
-              <td class="desc">Unindent cursor + 3 lines above</td>
-            </tr>
-            <tr>
-              <td><span class="key vim-key">V8j</span></td>
-              <td class="desc">Visual line select 8 lines down</td>
-            </tr>
-            <tr>
-              <td><span class="key vim-key">gq10j</span></td>
-              <td class="desc">Format cursor + 10 lines below</td>
-            </tr>
-            <tr>
-              <td><span class="key vim-key">=8j</span></td>
-              <td class="desc">Auto-indent cursor + 8 lines</td>
-            </tr>
-          </tbody>
-        </table>
-        <div class="tip">
-          <strong>The pattern:</strong> <code>[operator][count]j/k</code> — Look at the relative number, type that number with j (down) or k (up), add an operator in front to act on those lines
-        </div>
-      </div>
-
-      <!-- Power Combos -->
-      <div class="card combos full-width">
-        <h2><span class="icon">💥</span> Power Combos</h2>
-        <div class="command-grid">
-          <div class="command-item">
-            <span class="key vim-key">ciw</span>
-            <span class="desc">Change inner word</span>
-          </div>
-          <div class="command-item">
-            <span class="key vim-key">ci"</span>
-            <span class="desc">Change inside quotes</span>
-          </div>
-          <div class="command-item">
-            <span class="key vim-key">ci(</span>
-            <span class="desc">Change inside parens</span>
-          </div>
-          <div class="command-item">
-            <span class="key vim-key">ca{</span>
-            <span class="desc">Change around braces</span>
-          </div>
-          <div class="command-item">
-            <span class="key vim-key">dit</span>
-            <span class="desc">Delete inside tag (JSX!)</span>
-          </div>
-          <div class="command-item">
-            <span class="key vim-key">dat</span>
-            <span class="desc">Delete around tag</span>
-          </div>
-          <div class="command-item">
-            <span class="key vim-key">yiw</span>
-            <span class="desc">Yank inner word</span>
-          </div>
-          <div class="command-item">
-            <span class="key vim-key">yi"</span>
-            <span class="desc">Yank inside quotes</span>
-          </div>
-          <div class="command-item">
-            <span class="key vim-key">vat</span>
-            <span class="desc">Select around tag</span>
-          </div>
-          <div class="command-item">
-            <span class="key vim-key">vip</span>
-            <span class="desc">Select inner paragraph</span>
-          </div>
-          <div class="command-item">
-            <span class="key vim-key">yyp</span>
-            <span class="desc">Duplicate line</span>
-          </div>
-          <div class="command-item">
-            <span class="key vim-key">ddp</span>
-            <span class="desc">Move line down</span>
-          </div>
-          <div class="command-item">
-            <span class="key vim-key">xp</span>
-            <span class="desc">Swap two characters</span>
-          </div>
-          <div class="command-item">
-            <span class="key vim-key">ea</span>
-            <span class="desc">Append at end of word</span>
-          </div>
-          <div class="command-item">
-            <span class="key vim-key">*</span>
-            <span class="desc">Search word under cursor</span>
-          </div>
-          <div class="command-item">
-            <span class="key vim-key">.</span>
-            <span class="desc">Repeat last command</span>
-          </div>
-        </div>
-
-        <div class="tip">
-          <strong>Pro tip:</strong> The <code>.</code> command is god tier. Do an action once, repeat it anywhere with <code>.</code>
-        </div>
-      </div>
-
-      <!-- WebStorm Translation -->
-      <div class="card translation full-width">
-        <h2><span class="icon">🔄</span> WebStorm → Neovim Translation</h2>
-        <table>
-          <thead>
-            <tr>
-              <th>WebStorm</th>
-              <th>Vim / NVChad</th>
-              <th>What it does</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><span class="key">Cmd+D</span> Select next occurrence</td>
-              <td><span class="key vim-key">*</span> then <span class="key vim-key">cgn</span></td>
-              <td class="desc">Select word, change next, <code>.</code> to repeat</td>
-            </tr>
-            <tr>
-              <td><span class="key">Cmd+Shift+D</span> Duplicate line</td>
-              <td><span class="key vim-key">yyp</span></td>
-              <td class="desc">Yank line, paste below</td>
-            </tr>
-            <tr>
-              <td><span class="key">Cmd+Up/Down</span> Move line</td>
-              <td><span class="key vim-key">ddp</span> / <span class="key vim-key">ddkP</span></td>
-              <td class="desc">Delete line, paste below/above</td>
-            </tr>
-            <tr>
-              <td><span class="key">Cmd+R</span> Rename</td>
-              <td><span class="key vim-key">&lt;leader&gt;ra</span></td>
-              <td class="desc">LSP rename (smarter refactor)</td>
-            </tr>
-            <tr>
-              <td><span class="key">Cmd+O</span> Go to symbol</td>
-              <td><span class="key vim-key">&lt;leader&gt;fs</span></td>
-              <td class="desc">Telescope symbols</td>
-            </tr>
-            <tr>
-              <td><span class="key">Cmd+T</span> Go to file</td>
-              <td><span class="key vim-key">&lt;leader&gt;ff</span></td>
-              <td class="desc">Telescope find files</td>
-            </tr>
-            <tr>
-              <td><span class="key">Cmd+Shift+F</span> Find in project</td>
-              <td><span class="key vim-key">&lt;leader&gt;fw</span></td>
-              <td class="desc">Telescope live grep</td>
-            </tr>
-            <tr>
-              <td><span class="key">Cmd+Alt+F</span> Replace</td>
-              <td><span class="key vim-key">:%s/old/new/gc</span></td>
-              <td class="desc">Substitute with confirm</td>
-            </tr>
-            <tr>
-              <td><span class="key">Cmd+/</span> Toggle comment</td>
-              <td><span class="key vim-key">gcc</span> / <span class="key vim-key">gc</span></td>
-              <td class="desc">Comment line / selection</td>
-            </tr>
-            <tr>
-              <td><span class="key">F4</span> Edit source</td>
-              <td><span class="key vim-key">gd</span></td>
-              <td class="desc">Go to definition</td>
-            </tr>
-            <tr>
-              <td><span class="key">Ctrl+G</span> Select next</td>
-              <td><span class="key vim-key">Ctrl+n</span> (multi-cursor plugin)</td>
-              <td class="desc">Or use <code>cgn</code> pattern</td>
+              <td><kbd>v</kbd></td>
+              <td><kbd>vw</kbd><span class="sub">to next word</span></td>
+              <td><kbd>viw</kbd><span class="sub">word</span></td>
+              <td><kbd>v$</kbd><span class="sub">to EOL</span></td>
+              <td><kbd>vi"</kbd><span class="sub">in quotes</span></td>
+              <td><kbd>vi{</kbd><span class="sub">in braces</span></td>
+              <td><kbd>vit</kbd><span class="sub">in tag</span></td>
+              <td><kbd>v5j</kbd><span class="sub">5 lines</span></td>
             </tr>
           </tbody>
         </table>
       </div>
+      <p class="note"><strong>The math:</strong> 6 verbs × 10 motions = 60 commands. Add i/a variants = 120. Add counts = infinite.</p>
+    </section>
 
-      <!-- NVChad Keys -->
-      <div class="card nvchad-keys full-width">
-        <h2><span class="icon">🎯</span> NVChad Essential Keys (Leader = Space)</h2>
-        <div class="command-grid">
-          <div class="command-item">
-            <span class="key vim-key">&lt;leader&gt;ff</span>
-            <span class="desc">Find files</span>
-          </div>
-          <div class="command-item">
-            <span class="key vim-key">&lt;leader&gt;fw</span>
-            <span class="desc">Live grep</span>
-          </div>
-          <div class="command-item">
-            <span class="key vim-key">&lt;leader&gt;fb</span>
-            <span class="desc">Find buffers</span>
-          </div>
-          <div class="command-item">
-            <span class="key vim-key">&lt;leader&gt;fo</span>
-            <span class="desc">Recent files</span>
-          </div>
-          <div class="command-item">
-            <span class="key vim-key">&lt;leader&gt;e</span>
-            <span class="desc">File explorer</span>
-          </div>
-          <div class="command-item">
-            <span class="key vim-key">&lt;leader&gt;x</span>
-            <span class="desc">Close buffer</span>
-          </div>
-          <div class="command-item">
-            <span class="key vim-key">&lt;leader&gt;n</span>
-            <span class="desc">Line numbers</span>
-          </div>
-          <div class="command-item">
-            <span class="key vim-key">&lt;leader&gt;th</span>
-            <span class="desc">Theme picker</span>
-          </div>
-          <div class="command-item">
-            <span class="key vim-key">&lt;leader&gt;ch</span>
-            <span class="desc">Cheatsheet</span>
-          </div>
-          <div class="command-item">
-            <span class="key vim-key">gd</span>
-            <span class="desc">Go to definition</span>
-          </div>
-          <div class="command-item">
-            <span class="key vim-key">gr</span>
-            <span class="desc">Go to references</span>
-          </div>
-          <div class="command-item">
-            <span class="key vim-key">K</span>
-            <span class="desc">Hover docs</span>
-          </div>
-          <div class="command-item">
-            <span class="key vim-key">&lt;leader&gt;ca</span>
-            <span class="desc">Code actions</span>
-          </div>
-          <div class="command-item">
-            <span class="key vim-key">&lt;leader&gt;ra</span>
-            <span class="desc">Rename symbol</span>
-          </div>
-          <div class="command-item">
-            <span class="key vim-key">&lt;leader&gt;fm</span>
-            <span class="desc">Format file</span>
-          </div>
-          <div class="command-item">
-            <span class="key vim-key">[d</span> / <span class="key vim-key">]d</span>
-            <span class="desc">Prev / next diagnostic</span>
-          </div>
-          <div class="command-item">
-            <span class="key vim-key">Tab</span> / <span class="key vim-key">Shift+Tab</span>
-            <span class="desc">Next / prev buffer</span>
-          </div>
-          <div class="command-item">
-            <span class="key vim-key">Ctrl+h/j/k/l</span>
-            <span class="desc">Navigate splits</span>
-          </div>
+    <!-- Power Combos -->
+    <section class="section" id="combos">
+      <h2 class="section-title" data-num="05">Power Combos</h2>
+      <div class="cmd-grid">
+        <div class="cmd-item"><kbd>ciw</kbd><span class="desc">Change word</span></div>
+        <div class="cmd-item"><kbd>ci"</kbd><span class="desc">Change in quotes</span></div>
+        <div class="cmd-item"><kbd>ci(</kbd><span class="desc">Change in parens</span></div>
+        <div class="cmd-item"><kbd>ca{</kbd><span class="desc">Change around braces</span></div>
+        <div class="cmd-item"><kbd>dit</kbd><span class="desc">Delete in tag</span></div>
+        <div class="cmd-item"><kbd>dat</kbd><span class="desc">Delete around tag</span></div>
+        <div class="cmd-item"><kbd>yiw</kbd><span class="desc">Yank word</span></div>
+        <div class="cmd-item"><kbd>yi"</kbd><span class="desc">Yank in quotes</span></div>
+        <div class="cmd-item"><kbd>vip</kbd><span class="desc">Select paragraph</span></div>
+        <div class="cmd-item"><kbd>yyp</kbd><span class="desc">Duplicate line</span></div>
+        <div class="cmd-item"><kbd>ddp</kbd><span class="desc">Move line down</span></div>
+        <div class="cmd-item"><kbd>xp</kbd><span class="desc">Swap chars</span></div>
+        <div class="cmd-item"><kbd>ea</kbd><span class="desc">Append at word end</span></div>
+        <div class="cmd-item"><kbd>*</kbd><span class="desc">Search word at cursor</span></div>
+        <div class="cmd-item"><kbd>.</kbd><span class="desc">Repeat last change</span></div>
+        <div class="cmd-item"><kbd>cgn</kbd><span class="desc">Change next match</span></div>
+      </div>
+      <p class="note"><strong>Pro tip:</strong> <kbd>.</kbd> repeats your last change. <kbd>*</kbd> + <kbd>cgn</kbd> + <kbd>.</kbd> = multi-cursor replacement.</p>
+    </section>
+
+    <!-- Modes -->
+    <section class="section">
+      <h2 class="section-title" data-num="06">Modes & Search</h2>
+      <div class="cols-2">
+        <div class="block">
+          <h3 class="block-title">Entering Modes</h3>
+          <table>
+            <tr><td><kbd>Esc</kbd></td><td class="desc">Normal mode</td></tr>
+            <tr><td><kbd>i</kbd> / <kbd>a</kbd></td><td class="desc">Insert before / after cursor</td></tr>
+            <tr><td><kbd>I</kbd> / <kbd>A</kbd></td><td class="desc">Insert at line start / end</td></tr>
+            <tr><td><kbd>o</kbd> / <kbd>O</kbd></td><td class="desc">New line below / above</td></tr>
+            <tr><td><kbd>v</kbd> / <kbd>V</kbd> / <kbd>Ctrl+v</kbd></td><td class="desc">Visual / line / block</td></tr>
+            <tr><td><kbd>:</kbd></td><td class="desc">Command mode</td></tr>
+          </table>
+        </div>
+
+        <div class="block">
+          <h3 class="block-title">Search & Replace</h3>
+          <table>
+            <tr><td><kbd>/pattern</kbd></td><td class="desc">Search forward</td></tr>
+            <tr><td><kbd>?pattern</kbd></td><td class="desc">Search backward</td></tr>
+            <tr><td><kbd>n</kbd> / <kbd>N</kbd></td><td class="desc">Next / prev match</td></tr>
+            <tr><td><kbd>*</kbd> / <kbd>#</kbd></td><td class="desc">Search word at cursor</td></tr>
+            <tr><td><kbd>:%s/old/new/g</kbd></td><td class="desc">Replace all in file</td></tr>
+            <tr><td><kbd>:%s/old/new/gc</kbd></td><td class="desc">Replace with confirm</td></tr>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- NVChad -->
+    <section class="section" id="nvchad">
+      <h2 class="section-title" data-num="07">NVChad / LSP</h2>
+      <p style="color: var(--text-dim); margin-bottom: 1.5rem;">Leader = <kbd class="dim">Space</kbd></p>
+      <div class="cols-3">
+        <div class="block">
+          <h3 class="block-title">Find</h3>
+          <table>
+            <tr><td><kbd>leader</kbd><kbd>ff</kbd></td><td class="desc">Find files</td></tr>
+            <tr><td><kbd>leader</kbd><kbd>fw</kbd></td><td class="desc">Live grep</td></tr>
+            <tr><td><kbd>leader</kbd><kbd>fb</kbd></td><td class="desc">Buffers</td></tr>
+            <tr><td><kbd>leader</kbd><kbd>fo</kbd></td><td class="desc">Recent files</td></tr>
+            <tr><td><kbd>leader</kbd><kbd>e</kbd></td><td class="desc">File explorer</td></tr>
+          </table>
+        </div>
+
+        <div class="block">
+          <h3 class="block-title">LSP</h3>
+          <table>
+            <tr><td><kbd>gd</kbd></td><td class="desc">Go to definition</td></tr>
+            <tr><td><kbd>gr</kbd></td><td class="desc">Go to references</td></tr>
+            <tr><td><kbd>K</kbd></td><td class="desc">Hover docs</td></tr>
+            <tr><td><kbd>leader</kbd><kbd>ca</kbd></td><td class="desc">Code actions</td></tr>
+            <tr><td><kbd>leader</kbd><kbd>ra</kbd></td><td class="desc">Rename symbol</td></tr>
+          </table>
+        </div>
+
+        <div class="block">
+          <h3 class="block-title">TypeScript</h3>
+          <table>
+            <tr><td><kbd>leader</kbd><kbd>i</kbd></td><td class="desc">Auto import</td></tr>
+            <tr><td><kbd>leader</kbd><kbd>ai</kbd></td><td class="desc">Add all imports</td></tr>
+            <tr><td><kbd>leader</kbd><kbd>oi</kbd></td><td class="desc">Organize imports</td></tr>
+            <tr><td><kbd>leader</kbd><kbd>fm</kbd></td><td class="desc">Format (Prettier)</td></tr>
+            <tr><td><kbd>[d</kbd> / <kbd>]d</kbd></td><td class="desc">Prev / next error</td></tr>
+          </table>
         </div>
       </div>
 
-      <!-- Modes -->
-      <div class="card" style="border-left: 4px solid #e879f9;">
-        <h2 style="color: #e879f9;"><span class="icon">🔮</span> The Modes</h2>
-        <table>
-          <tr>
-            <td><span class="key vim-key">Esc</span></td>
-            <td class="desc">Normal mode (navigation)</td>
-          </tr>
-          <tr>
-            <td><span class="key vim-key">i</span></td>
-            <td class="desc">Insert mode (before cursor)</td>
-          </tr>
-          <tr>
-            <td><span class="key vim-key">a</span></td>
-            <td class="desc">Insert mode (after cursor)</td>
-          </tr>
-          <tr>
-            <td><span class="key vim-key">I</span></td>
-            <td class="desc">Insert at line start</td>
-          </tr>
-          <tr>
-            <td><span class="key vim-key">A</span></td>
-            <td class="desc">Insert at line end</td>
-          </tr>
-          <tr>
-            <td><span class="key vim-key">o</span></td>
-            <td class="desc">New line below</td>
-          </tr>
-          <tr>
-            <td><span class="key vim-key">O</span></td>
-            <td class="desc">New line above</td>
-          </tr>
-          <tr>
-            <td><span class="key vim-key">v</span></td>
-            <td class="desc">Visual mode</td>
-          </tr>
-          <tr>
-            <td><span class="key vim-key">V</span></td>
-            <td class="desc">Visual line mode</td>
-          </tr>
-          <tr>
-            <td><span class="key vim-key">Ctrl+v</span></td>
-            <td class="desc">Visual block mode</td>
-          </tr>
-          <tr>
-            <td><span class="key vim-key">:</span></td>
-            <td class="desc">Command mode</td>
-          </tr>
-        </table>
+      <div class="block" style="margin-top: 2rem;">
+        <h3 class="block-title">NvimTree (File Explorer)</h3>
+        <div class="cmd-grid">
+          <div class="cmd-item"><kbd>a</kbd><span class="desc">Create file/folder</span></div>
+          <div class="cmd-item"><kbd>d</kbd><span class="desc">Delete</span></div>
+          <div class="cmd-item"><kbd>r</kbd><span class="desc">Rename</span></div>
+          <div class="cmd-item"><kbd>x</kbd><span class="desc">Cut</span></div>
+          <div class="cmd-item"><kbd>c</kbd><span class="desc">Copy</span></div>
+          <div class="cmd-item"><kbd>p</kbd><span class="desc">Paste</span></div>
+          <div class="cmd-item"><kbd>y</kbd><span class="desc">Copy name</span></div>
+          <div class="cmd-item"><kbd>Y</kbd><span class="desc">Copy path</span></div>
+          <div class="cmd-item"><kbd>H</kbd><span class="desc">Toggle hidden</span></div>
+          <div class="cmd-item"><kbd>R</kbd><span class="desc">Refresh</span></div>
+        </div>
       </div>
+    </section>
 
-      <!-- Search & Replace -->
-      <div class="card" style="border-left: 4px solid #22d3ee;">
-        <h2 style="color: #22d3ee;"><span class="icon">🔍</span> Search & Replace</h2>
-        <table>
-          <tr>
-            <td><span class="key vim-key">/pattern</span></td>
-            <td class="desc">Search forward</td>
-          </tr>
-          <tr>
-            <td><span class="key vim-key">?pattern</span></td>
-            <td class="desc">Search backward</td>
-          </tr>
-          <tr>
-            <td><span class="key vim-key">n</span> / <span class="key vim-key">N</span></td>
-            <td class="desc">Next / prev match</td>
-          </tr>
-          <tr>
-            <td><span class="key vim-key">*</span> / <span class="key vim-key">#</span></td>
-            <td class="desc">Search word under cursor</td>
-          </tr>
-          <tr>
-            <td><span class="key vim-key">:s/old/new</span></td>
-            <td class="desc">Replace first on line</td>
-          </tr>
-          <tr>
-            <td><span class="key vim-key">:s/old/new/g</span></td>
-            <td class="desc">Replace all on line</td>
-          </tr>
-          <tr>
-            <td><span class="key vim-key">:%s/old/new/g</span></td>
-            <td class="desc">Replace all in file</td>
-          </tr>
-          <tr>
-            <td><span class="key vim-key">:%s/old/new/gc</span></td>
-            <td class="desc">Replace with confirm</td>
-          </tr>
-        </table>
-        <div class="tip">
-          <strong>cgn pattern:</strong> Search with <code>/</code> or <code>*</code>, then <code>cgn</code> to change match, then <code>.</code> to repeat on next matches
+    <div class="divider"></div>
+
+    <!-- TMUX -->
+    <section class="section tmux-section" id="tmux">
+      <h2 class="section-title">Terminal Multiplexer</h2>
+      <p style="color: var(--text-dim); margin-bottom: 1.5rem;">Prefix = <kbd class="dim">Ctrl+a</kbd></p>
+
+      <div class="cols-2" style="margin-bottom: 2rem;">
+        <div class="block">
+          <h3 class="block-title">Shell Commands</h3>
+          <table>
+            <tr><td><kbd class="dim">tmux</kbd></td><td class="desc">Start new session</td></tr>
+            <tr><td><kbd class="dim">tmux new -s name</kbd></td><td class="desc">Named session</td></tr>
+            <tr><td><kbd class="dim">tmux ls</kbd></td><td class="desc">List sessions</td></tr>
+            <tr><td><kbd class="dim">tmux a</kbd></td><td class="desc">Attach to last</td></tr>
+            <tr><td><kbd class="dim">tmux a -t name</kbd></td><td class="desc">Attach to named</td></tr>
+            <tr><td><kbd class="dim">tmux kill-session -t x</kbd></td><td class="desc">Kill session</td></tr>
+          </table>
+        </div>
+
+        <div class="block">
+          <h3 class="block-title">Sessions</h3>
+          <table>
+            <tr><td><kbd>d</kbd></td><td class="desc">Detach</td></tr>
+            <tr><td><kbd>$</kbd></td><td class="desc">Rename session</td></tr>
+            <tr><td><kbd>s</kbd></td><td class="desc">List/switch sessions</td></tr>
+            <tr><td><kbd>Ctrl+s</kbd></td><td class="desc">Save (resurrect)</td></tr>
+            <tr><td><kbd>Ctrl+r</kbd></td><td class="desc">Restore (resurrect)</td></tr>
+          </table>
         </div>
       </div>
 
-      <!-- NvimTree File Explorer -->
-      <div class="card" style="border-left: 4px solid #4ade80;">
-        <h2 style="color: #4ade80;"><span class="icon">📂</span> NvimTree (File Explorer)</h2>
-        <p style="color: #a1a1aa; margin-bottom: 0.8rem; font-size: 0.9rem;">
-          Open with <span class="key vim-key">&lt;leader&gt;e</span> (Space+e)
-        </p>
-        <table>
-          <tr>
-            <td><span class="key vim-key">a</span></td>
-            <td class="desc">Create file (add <code>/</code> for folder)</td>
-          </tr>
-          <tr>
-            <td><span class="key vim-key">d</span></td>
-            <td class="desc">Delete file/folder</td>
-          </tr>
-          <tr>
-            <td><span class="key vim-key">r</span></td>
-            <td class="desc">Rename</td>
-          </tr>
-          <tr>
-            <td><span class="key vim-key">x</span></td>
-            <td class="desc">Cut</td>
-          </tr>
-          <tr>
-            <td><span class="key vim-key">c</span></td>
-            <td class="desc">Copy</td>
-          </tr>
-          <tr>
-            <td><span class="key vim-key">p</span></td>
-            <td class="desc">Paste</td>
-          </tr>
-          <tr>
-            <td><span class="key vim-key">y</span></td>
-            <td class="desc">Copy filename</td>
-          </tr>
-          <tr>
-            <td><span class="key vim-key">Y</span></td>
-            <td class="desc">Copy relative path</td>
-          </tr>
-          <tr>
-            <td><span class="key vim-key">gy</span></td>
-            <td class="desc">Copy absolute path</td>
-          </tr>
-          <tr>
-            <td><span class="key vim-key">I</span></td>
-            <td class="desc">Toggle gitignored files</td>
-          </tr>
-          <tr>
-            <td><span class="key vim-key">H</span></td>
-            <td class="desc">Toggle hidden/dotfiles</td>
-          </tr>
-          <tr>
-            <td><span class="key vim-key">R</span></td>
-            <td class="desc">Refresh tree</td>
-          </tr>
-        </table>
-        <div class="tip">
-          <strong>Quick create:</strong> Type <code>a</code> then <code>components/Button.tsx</code> to create nested file in one go
+      <div class="cols-3">
+        <div class="block">
+          <h3 class="block-title">Windows</h3>
+          <table>
+            <tr><td><kbd>c</kbd></td><td class="desc">New window</td></tr>
+            <tr><td><kbd>n</kbd> / <kbd>p</kbd></td><td class="desc">Next / prev</td></tr>
+            <tr><td><kbd>0-9</kbd></td><td class="desc">Go to window #</td></tr>
+            <tr><td><kbd>,</kbd></td><td class="desc">Rename window</td></tr>
+            <tr><td><kbd>&</kbd></td><td class="desc">Close window</td></tr>
+            <tr><td><kbd><</kbd> / <kbd>></kbd></td><td class="desc">Swap left / right</td></tr>
+          </table>
+          <p class="note">No prefix: <kbd class="dim">Ctrl+h</kbd> / <kbd class="dim">Ctrl+l</kbd></p>
+        </div>
+
+        <div class="block">
+          <h3 class="block-title">Panes</h3>
+          <table>
+            <tr><td><kbd>|</kbd></td><td class="desc">Split vertical</td></tr>
+            <tr><td><kbd>-</kbd></td><td class="desc">Split horizontal</td></tr>
+            <tr><td><kbd>h</kbd><kbd>j</kbd><kbd>k</kbd><kbd>l</kbd></td><td class="desc">Navigate</td></tr>
+            <tr><td><kbd>H</kbd><kbd>J</kbd><kbd>K</kbd><kbd>L</kbd></td><td class="desc">Resize</td></tr>
+            <tr><td><kbd>z</kbd></td><td class="desc">Zoom (fullscreen)</td></tr>
+            <tr><td><kbd>x</kbd></td><td class="desc">Close pane</td></tr>
+          </table>
+        </div>
+
+        <div class="block">
+          <h3 class="block-title">Copy & Plugins</h3>
+          <table>
+            <tr><td><kbd>[</kbd></td><td class="desc">Enter copy mode</td></tr>
+            <tr><td><kbd>v</kbd></td><td class="desc">Start selection</td></tr>
+            <tr><td><kbd>y</kbd></td><td class="desc">Copy</td></tr>
+            <tr><td><kbd>]</kbd></td><td class="desc">Paste</td></tr>
+            <tr><td><kbd>I</kbd></td><td class="desc">Install plugins</td></tr>
+            <tr><td><kbd>r</kbd></td><td class="desc">Reload config</td></tr>
+          </table>
         </div>
       </div>
-    </div>
+    </section>
+  </main>
 
-    <!-- Verb + Motion Combination Table -->
-    <div class="section-header">⚡ Verb + Motion = Magic</div>
-    <div class="card full-width" style="border-left: 4px solid #f472b6; max-width: 1400px; margin: 0 auto;">
-      <h2 style="color: #f472b6;"><span class="icon">🧮</span> The Combination Matrix</h2>
-      <p style="color: #a1a1aa; margin-bottom: 1.5rem;">Every verb works with every motion. Learn the parts, combine infinitely.</p>
-
-      <div style="overflow-x: auto;">
-        <table style="min-width: 900px;" class="matrix-table">
-          <thead>
-            <tr>
-              <th style="width: 80px;">Verb</th>
-              <th style="color: #34d399;">w <span style="font-weight: 400; opacity: 0.7;">(word)</span></th>
-              <th style="color: #34d399;">iw <span style="font-weight: 400; opacity: 0.7;">(inner word)</span></th>
-              <th style="color: #34d399;">$ <span style="font-weight: 400; opacity: 0.7;">(end of line)</span></th>
-              <th style="color: #34d399;">i" <span style="font-weight: 400; opacity: 0.7;">(inside ")</span></th>
-              <th style="color: #34d399;">i{ <span style="font-weight: 400; opacity: 0.7;">(inside {})</span></th>
-              <th style="color: #34d399;">it <span style="font-weight: 400; opacity: 0.7;">(inside tag)</span></th>
-              <th style="color: #34d399;">5j <span style="font-weight: 400; opacity: 0.7;">(5 lines ↓)</span></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><span class="key vim-key">d</span> <span style="color: #a1a1aa; font-size: 0.8rem;">delete</span></td>
-              <td><span class="key vim-key">dw</span><br><span class="matrix-desc">delete to next word</span></td>
-              <td><span class="key vim-key">diw</span><br><span class="matrix-desc">delete word</span></td>
-              <td><span class="key vim-key">d$</span><br><span class="matrix-desc">delete to EOL</span></td>
-              <td><span class="key vim-key">di"</span><br><span class="matrix-desc">delete in quotes</span></td>
-              <td><span class="key vim-key">di{</span><br><span class="matrix-desc">delete in braces</span></td>
-              <td><span class="key vim-key">dit</span><br><span class="matrix-desc">delete in tag</span></td>
-              <td><span class="key vim-key">d5j</span><br><span class="matrix-desc">delete 5 lines down</span></td>
-            </tr>
-            <tr>
-              <td><span class="key vim-key">c</span> <span style="color: #a1a1aa; font-size: 0.8rem;">change</span></td>
-              <td><span class="key vim-key">cw</span><br><span class="matrix-desc">change to next word</span></td>
-              <td><span class="key vim-key">ciw</span><br><span class="matrix-desc">change word</span></td>
-              <td><span class="key vim-key">c$</span><br><span class="matrix-desc">change to EOL</span></td>
-              <td><span class="key vim-key">ci"</span><br><span class="matrix-desc">change in quotes</span></td>
-              <td><span class="key vim-key">ci{</span><br><span class="matrix-desc">change in braces</span></td>
-              <td><span class="key vim-key">cit</span><br><span class="matrix-desc">change in tag</span></td>
-              <td><span class="key vim-key">c5j</span><br><span class="matrix-desc">change 5 lines down</span></td>
-            </tr>
-            <tr>
-              <td><span class="key vim-key">y</span> <span style="color: #a1a1aa; font-size: 0.8rem;">yank</span></td>
-              <td><span class="key vim-key">yw</span><br><span class="matrix-desc">yank to next word</span></td>
-              <td><span class="key vim-key">yiw</span><br><span class="matrix-desc">yank word</span></td>
-              <td><span class="key vim-key">y$</span><br><span class="matrix-desc">yank to EOL</span></td>
-              <td><span class="key vim-key">yi"</span><br><span class="matrix-desc">yank in quotes</span></td>
-              <td><span class="key vim-key">yi{</span><br><span class="matrix-desc">yank in braces</span></td>
-              <td><span class="key vim-key">yit</span><br><span class="matrix-desc">yank in tag</span></td>
-              <td><span class="key vim-key">y5j</span><br><span class="matrix-desc">yank 5 lines down</span></td>
-            </tr>
-            <tr>
-              <td><span class="key vim-key">v</span> <span style="color: #a1a1aa; font-size: 0.8rem;">select</span></td>
-              <td><span class="key vim-key">vw</span><br><span class="matrix-desc">select to next word</span></td>
-              <td><span class="key vim-key">viw</span><br><span class="matrix-desc">select word</span></td>
-              <td><span class="key vim-key">v$</span><br><span class="matrix-desc">select to EOL</span></td>
-              <td><span class="key vim-key">vi"</span><br><span class="matrix-desc">select in quotes</span></td>
-              <td><span class="key vim-key">vi{</span><br><span class="matrix-desc">select in braces</span></td>
-              <td><span class="key vim-key">vit</span><br><span class="matrix-desc">select in tag</span></td>
-              <td><span class="key vim-key">v5j</span><br><span class="matrix-desc">select 5 lines down</span></td>
-            </tr>
-            <tr>
-              <td><span class="key vim-key">></span> <span style="color: #a1a1aa; font-size: 0.8rem;">indent</span></td>
-              <td><span class="key vim-key">>w</span><br><span class="matrix-desc">indent word</span></td>
-              <td><span class="key vim-key">>iw</span><br><span class="matrix-desc">indent word</span></td>
-              <td><span class="key vim-key">>$</span><br><span class="matrix-desc">indent to EOL</span></td>
-              <td><span class="key vim-key">>i"</span><br><span class="matrix-desc">indent in quotes</span></td>
-              <td><span class="key vim-key">>i{</span><br><span class="matrix-desc">indent in braces</span></td>
-              <td><span class="key vim-key">>it</span><br><span class="matrix-desc">indent in tag</span></td>
-              <td><span class="key vim-key">>5j</span><br><span class="matrix-desc">indent 5 lines down</span></td>
-            </tr>
-            <tr>
-              <td><span class="key vim-key">gU</span> <span style="color: #a1a1aa; font-size: 0.8rem;">UPPER</span></td>
-              <td><span class="key vim-key">gUw</span><br><span class="matrix-desc">uppercase word</span></td>
-              <td><span class="key vim-key">gUiw</span><br><span class="matrix-desc">uppercase word</span></td>
-              <td><span class="key vim-key">gU$</span><br><span class="matrix-desc">uppercase to EOL</span></td>
-              <td><span class="key vim-key">gUi"</span><br><span class="matrix-desc">uppercase in quotes</span></td>
-              <td><span class="key vim-key">gUi{</span><br><span class="matrix-desc">uppercase in braces</span></td>
-              <td><span class="key vim-key">gUit</span><br><span class="matrix-desc">uppercase in tag</span></td>
-              <td><span class="key vim-key">gU5j</span><br><span class="matrix-desc">uppercase 5 lines</span></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="tip" style="margin-top: 1.5rem;">
-        <strong>The magic:</strong> Learn 6 verbs + 10 motions = 60 commands. Add <code>a</code> (around) vs <code>i</code> (inside) = 120 commands. Add counts = infinite power.
-      </div>
-    </div>
-
-    <!-- TypeScript / LSP Section -->
-    <div class="section-header">TypeScript Development</div>
-    <div class="card full-width" style="border-left: 4px solid #3178c6; max-width: 1400px; margin: 0 auto;">
-      <h2 style="color: #3178c6;"><span class="icon">📘</span> TypeScript & LSP (Leader = Space)</h2>
-      <p style="color: #a1a1aa; margin-bottom: 1.5rem;">ESLint errors show live. Prettier formats on save. Use these keys for TypeScript-specific actions.</p>
-
-      <div class="command-grid">
-        <div class="command-item">
-          <span class="key vim-key">gd</span>
-          <span class="desc">Go to definition</span>
-        </div>
-        <div class="command-item">
-          <span class="key vim-key">gr</span>
-          <span class="desc">Go to references</span>
-        </div>
-        <div class="command-item">
-          <span class="key vim-key">K</span>
-          <span class="desc">Hover docs / type info</span>
-        </div>
-        <div class="command-item">
-          <span class="key vim-key">&lt;leader&gt;ca</span>
-          <span class="desc">Code actions menu</span>
-        </div>
-        <div class="command-item">
-          <span class="key vim-key">&lt;leader&gt;i</span>
-          <span class="desc">Auto import symbol</span>
-        </div>
-        <div class="command-item">
-          <span class="key vim-key">&lt;leader&gt;ai</span>
-          <span class="desc">Add all missing imports</span>
-        </div>
-        <div class="command-item">
-          <span class="key vim-key">&lt;leader&gt;oi</span>
-          <span class="desc">Organize imports</span>
-        </div>
-        <div class="command-item">
-          <span class="key vim-key">&lt;leader&gt;lf</span>
-          <span class="desc">ESLint fix all</span>
-        </div>
-        <div class="command-item">
-          <span class="key vim-key">&lt;leader&gt;ra</span>
-          <span class="desc">Rename symbol</span>
-        </div>
-        <div class="command-item">
-          <span class="key vim-key">&lt;leader&gt;fm</span>
-          <span class="desc">Format file (Prettier)</span>
-        </div>
-        <div class="command-item">
-          <span class="key vim-key">[d</span>
-          <span class="desc">Previous diagnostic</span>
-        </div>
-        <div class="command-item">
-          <span class="key vim-key">]d</span>
-          <span class="desc">Next diagnostic</span>
-        </div>
-        <div class="command-item">
-          <span class="key vim-key">&lt;leader&gt;*</span>
-          <span class="desc">Grep word under cursor</span>
-        </div>
-        <div class="command-item">
-          <span class="key vim-key">&lt;leader&gt;fw</span>
-          <span class="desc">Live grep (visual: selection)</span>
-        </div>
-      </div>
-
-      <div class="tip" style="margin-top: 1.5rem;">
-        <strong>Workflow:</strong> ESLint + TypeScript errors appear live as you type. Prettier auto-formats on save. Use <code>&lt;leader&gt;lf</code> to manually fix all ESLint auto-fixable issues.
-      </div>
-    </div>
-
-    <!-- TMUX Section -->
-    <div class="section-header">TMUX Terminal Multiplexer</div>
-    <div class="grid">
-      <!-- Getting Started -->
-      <div class="card" style="border-left: 4px solid #f5a97f;">
-        <h2 style="color: #f5a97f;"><span class="icon">🚀</span> Getting Started</h2>
-        <p style="color: #a1a1aa; margin-bottom: 0.8rem; font-size: 0.9rem;">
-          Prefix key is <span class="key" style="color: #f5a97f;">Ctrl+a</span> (press, release, then command)
-        </p>
-        <table>
-          <tr>
-            <td><span class="key" style="color: #8bd5ca;">tmux</span></td>
-            <td class="desc">Start new session</td>
-          </tr>
-          <tr>
-            <td><span class="key" style="color: #8bd5ca;">tmux new -s work</span></td>
-            <td class="desc">Start named session</td>
-          </tr>
-          <tr>
-            <td><span class="key" style="color: #8bd5ca;">tmux ls</span></td>
-            <td class="desc">List sessions</td>
-          </tr>
-          <tr>
-            <td><span class="key" style="color: #8bd5ca;">tmux a</span></td>
-            <td class="desc">Attach to last session</td>
-          </tr>
-          <tr>
-            <td><span class="key" style="color: #8bd5ca;">tmux a -t work</span></td>
-            <td class="desc">Attach to named session</td>
-          </tr>
-          <tr>
-            <td><span class="key" style="color: #8bd5ca;">tmux kill-session -t x</span></td>
-            <td class="desc">Kill session</td>
-          </tr>
-        </table>
-      </div>
-
-      <!-- Sessions -->
-      <div class="card" style="border-left: 4px solid #c6a0f6;">
-        <h2 style="color: #c6a0f6;"><span class="icon">📁</span> Sessions (prefix +)</h2>
-        <table>
-          <tr>
-            <td><span class="key" style="color: #8bd5ca;">d</span></td>
-            <td class="desc">Detach from session</td>
-          </tr>
-          <tr>
-            <td><span class="key" style="color: #8bd5ca;">$</span></td>
-            <td class="desc">Rename session</td>
-          </tr>
-          <tr>
-            <td><span class="key" style="color: #8bd5ca;">s</span></td>
-            <td class="desc">List/switch sessions</td>
-          </tr>
-          <tr>
-            <td><span class="key" style="color: #8bd5ca;">Ctrl+s</span></td>
-            <td class="desc">Save session (resurrect)</td>
-          </tr>
-          <tr>
-            <td><span class="key" style="color: #8bd5ca;">Ctrl+r</span></td>
-            <td class="desc">Restore session (resurrect)</td>
-          </tr>
-        </table>
-        <div class="tip">
-          <strong>Auto-save:</strong> Sessions save every 10 minutes via continuum plugin
-        </div>
-      </div>
-
-      <!-- Windows -->
-      <div class="card" style="border-left: 4px solid #91d7e3;">
-        <h2 style="color: #91d7e3;"><span class="icon">🪟</span> Windows (prefix +)</h2>
-        <table>
-          <tr>
-            <td><span class="key" style="color: #8bd5ca;">c</span></td>
-            <td class="desc">Create new window</td>
-          </tr>
-          <tr>
-            <td><span class="key" style="color: #8bd5ca;">n</span> / <span class="key" style="color: #8bd5ca;">p</span></td>
-            <td class="desc">Next / previous window</td>
-          </tr>
-          <tr>
-            <td><span class="key" style="color: #8bd5ca;">0-9</span></td>
-            <td class="desc">Go to window #</td>
-          </tr>
-          <tr>
-            <td><span class="key" style="color: #8bd5ca;">,</span></td>
-            <td class="desc">Rename window</td>
-          </tr>
-          <tr>
-            <td><span class="key" style="color: #8bd5ca;">&</span></td>
-            <td class="desc">Close window</td>
-          </tr>
-          <tr>
-            <td><span class="key" style="color: #8bd5ca;"><</span> / <span class="key" style="color: #8bd5ca;">></span></td>
-            <td class="desc">Swap window left/right</td>
-          </tr>
-        </table>
-        <p style="color: #a1a1aa; margin-top: 0.8rem; font-size: 0.85rem;">
-          <strong>No prefix:</strong> <span class="key" style="color: #8bd5ca;">Ctrl+h</span> / <span class="key" style="color: #8bd5ca;">Ctrl+l</span> for prev/next window
-        </p>
-      </div>
-
-      <!-- Panes -->
-      <div class="card" style="border-left: 4px solid #a6da95;">
-        <h2 style="color: #a6da95;"><span class="icon">📐</span> Panes (prefix +)</h2>
-        <table>
-          <tr>
-            <td><span class="key" style="color: #8bd5ca;">|</span></td>
-            <td class="desc">Split vertical</td>
-          </tr>
-          <tr>
-            <td><span class="key" style="color: #8bd5ca;">-</span></td>
-            <td class="desc">Split horizontal</td>
-          </tr>
-          <tr>
-            <td><span class="key" style="color: #8bd5ca;">h/j/k/l</span></td>
-            <td class="desc">Navigate panes (vim-style)</td>
-          </tr>
-          <tr>
-            <td><span class="key" style="color: #8bd5ca;">H/J/K/L</span></td>
-            <td class="desc">Resize panes</td>
-          </tr>
-          <tr>
-            <td><span class="key" style="color: #8bd5ca;">x</span></td>
-            <td class="desc">Close pane</td>
-          </tr>
-          <tr>
-            <td><span class="key" style="color: #8bd5ca;">z</span></td>
-            <td class="desc">Toggle pane zoom (fullscreen)</td>
-          </tr>
-          <tr>
-            <td><span class="key" style="color: #8bd5ca;">Space</span></td>
-            <td class="desc">Cycle pane layouts</td>
-          </tr>
-          <tr>
-            <td><span class="key" style="color: #8bd5ca;">{</span> / <span class="key" style="color: #8bd5ca;">}</span></td>
-            <td class="desc">Swap pane position</td>
-          </tr>
-        </table>
-      </div>
-
-      <!-- Copy Mode -->
-      <div class="card" style="border-left: 4px solid #eed49f;">
-        <h2 style="color: #eed49f;"><span class="icon">📋</span> Copy Mode (prefix +)</h2>
-        <table>
-          <tr>
-            <td><span class="key" style="color: #8bd5ca;">[</span></td>
-            <td class="desc">Enter copy mode</td>
-          </tr>
-          <tr>
-            <td><span class="key" style="color: #8bd5ca;">v</span></td>
-            <td class="desc">Start selection (in copy mode)</td>
-          </tr>
-          <tr>
-            <td><span class="key" style="color: #8bd5ca;">y</span></td>
-            <td class="desc">Copy selection</td>
-          </tr>
-          <tr>
-            <td><span class="key" style="color: #8bd5ca;">]</span></td>
-            <td class="desc">Paste</td>
-          </tr>
-          <tr>
-            <td><span class="key" style="color: #8bd5ca;">Escape</span></td>
-            <td class="desc">Exit copy mode</td>
-          </tr>
-        </table>
-        <p style="color: #a1a1aa; margin-top: 0.8rem; font-size: 0.85rem;">
-          Copy mode uses vim keybindings: <span class="key" style="color: #8bd5ca;">h/j/k/l</span> to move, <span class="key" style="color: #8bd5ca;">/</span> to search
-        </p>
-      </div>
-
-      <!-- Plugins -->
-      <div class="card" style="border-left: 4px solid #ed8796;">
-        <h2 style="color: #ed8796;"><span class="icon">🔌</span> Plugins (prefix +)</h2>
-        <table>
-          <tr>
-            <td><span class="key" style="color: #8bd5ca;">I</span></td>
-            <td class="desc">Install plugins</td>
-          </tr>
-          <tr>
-            <td><span class="key" style="color: #8bd5ca;">U</span></td>
-            <td class="desc">Update plugins</td>
-          </tr>
-          <tr>
-            <td><span class="key" style="color: #8bd5ca;">Alt+u</span></td>
-            <td class="desc">Uninstall removed plugins</td>
-          </tr>
-          <tr>
-            <td><span class="key" style="color: #8bd5ca;">r</span></td>
-            <td class="desc">Reload config</td>
-          </tr>
-        </table>
-        <div class="tip">
-          <strong>Installed:</strong> sensible, resurrect, continuum, yank, catppuccin
-        </div>
-      </div>
-    </div>
-
-    <!-- Tmux Quick Reference -->
-    <div class="card full-width" style="border-left: 4px solid #f5a97f; max-width: 1400px; margin: 1.5rem auto 0;">
-      <h2 style="color: #f5a97f;"><span class="icon">⚡</span> Tmux Quick Reference (prefix = Ctrl+a)</h2>
-      <div class="command-grid">
-        <div class="command-item">
-          <span class="key" style="color: #8bd5ca;">|</span>
-          <span class="desc">Split vertical</span>
-        </div>
-        <div class="command-item">
-          <span class="key" style="color: #8bd5ca;">-</span>
-          <span class="desc">Split horizontal</span>
-        </div>
-        <div class="command-item">
-          <span class="key" style="color: #8bd5ca;">h/j/k/l</span>
-          <span class="desc">Navigate panes</span>
-        </div>
-        <div class="command-item">
-          <span class="key" style="color: #8bd5ca;">z</span>
-          <span class="desc">Zoom pane</span>
-        </div>
-        <div class="command-item">
-          <span class="key" style="color: #8bd5ca;">c</span>
-          <span class="desc">New window</span>
-        </div>
-        <div class="command-item">
-          <span class="key" style="color: #8bd5ca;">d</span>
-          <span class="desc">Detach</span>
-        </div>
-        <div class="command-item">
-          <span class="key" style="color: #8bd5ca;">Ctrl+s</span>
-          <span class="desc">Save session</span>
-        </div>
-        <div class="command-item">
-          <span class="key" style="color: #8bd5ca;">Ctrl+r</span>
-          <span class="desc">Restore session</span>
-        </div>
-        <div class="command-item">
-          <span class="key" style="color: #8bd5ca;">r</span>
-          <span class="desc">Reload config</span>
-        </div>
-        <div class="command-item">
-          <span class="key" style="color: #8bd5ca;">I</span>
-          <span class="desc">Install plugins</span>
-        </div>
-        <div class="command-item">
-          <span class="key" style="color: #8bd5ca;">[</span>
-          <span class="desc">Copy mode</span>
-        </div>
-        <div class="command-item">
-          <span class="key" style="color: #8bd5ca;">]</span>
-          <span class="desc">Paste</span>
-        </div>
-      </div>
-    </div>
-
-    <footer>
-      <p>Run <code>vimtutor</code> in terminal for interactive training</p>
-      <p style="margin-top: 0.5rem;">Press <code>&lt;leader&gt;ch</code> in NVChad for built-in cheatsheet</p>
-      <p style="margin-top: 0.5rem;">Tmux guide: <code>~/TMUX_GUIDE.md</code></p>
-    </footer>
-  </div>
+  <footer>
+    <p><code>vimtutor</code> for practice &nbsp;·&nbsp; <code>leader + ch</code> for NVChad cheatsheet</p>
+  </footer>
 </body>
 </html>
