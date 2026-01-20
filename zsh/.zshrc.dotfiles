@@ -55,6 +55,46 @@ tk() {
   [[ -n "$session" ]] && tmux kill-session -t "$session"
 }
 
+# Tmux coding layout - creates session with 4 panes (claude, nvim, 2 terminals)
+# Usage: coding [directory]
+# Example: coding ~/instacart/isc-web
+coding() {
+  local dir
+  if [[ -z "$1" ]]; then
+    dir="$(pwd)"
+  elif [[ -d "$1" ]]; then
+    dir="$(cd "$1" && pwd)"
+  else
+    dir="$(zoxide query "$1" 2>/dev/null)" || { echo "No match found for: $1"; return 1; }
+  fi
+  local name="${dir##*/}"
+
+  if [[ -n "$TMUX" ]]; then
+    echo "Already in tmux. Detach first or run from outside tmux."
+    return 1
+  fi
+
+  # If session exists, just attach to it
+  if tmux has-session -t "$name" 2>/dev/null; then
+    tmux attach-session -t "$name"
+    return 0
+  fi
+
+  tmux new-session -d -s "$name" -c "$dir" \; \
+    rename-window "$name" \; \
+    split-window -h -c "$dir" \; \
+    split-window -v -c "$dir" \; \
+    select-pane -t 1 \; \
+    split-window -v -c "$dir" \; \
+    select-layout "c288,200x52,0,0{100x52,0,0[100x44,0,0,40,100x7,0,45,43],99x52,101,0[99x44,101,0,41,99x7,101,45,42]}" \; \
+    select-pane -t 1 \; \
+    send-keys 'claude' C-m \; \
+    select-pane -t 3 \; \
+    send-keys 'nvim' C-m \; \
+    select-pane -t 1 \; \
+    attach-session -t "$name"
+}
+
 # Git aliases (formerly from Oh My Zsh git plugin)
 alias g='git'
 alias ga='git add'
