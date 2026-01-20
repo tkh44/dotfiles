@@ -9,10 +9,10 @@
 # ============================================================================
 
 # Theme and Colors
-theme = JetBrains Darcula
+theme = catppuccin-macchiato
 
 # Brighten foreground text for better readability
-foreground = #e8e8e8
+# foreground = #e8e8e8
 
 # Font Configuration
 font-family = "JetBrainsMono Nerd Font"

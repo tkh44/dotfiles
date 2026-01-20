@@ -15,11 +15,15 @@ brew "neovim"        # Editor
 brew "stow"          # Dotfiles symlink manager
 brew "git"           # Version control
 brew "gh"            # GitHub CLI
+brew "git-delta"     # Better git diffs
 brew "coreutils"     # GNU core utilities (gdate, etc.)
+brew "fswatch"       # File change monitor
 brew "gnupg"         # GPG for commit signing
 
 # Shell
 brew "zsh"
+brew "spaceship"                      # Spaceship prompt
+brew "zsh-history-substring-search"   # Better history search (fixes cursor issues in tmux)
 
 # Development
 brew "fnm"           # Fast Node Manager (manages Node versions)

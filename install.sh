@@ -60,6 +60,15 @@ if command -v fnm &> /dev/null; then
     fi
 fi
 
+# Install global npm/bun packages
+echo ""
+echo "Installing global packages..."
+if command -v bun &> /dev/null; then
+    bun install -g critique
+else
+    npm install -g critique
+fi
+
 # Backup existing dotfiles and stow
 echo ""
 echo "Stowing dotfiles..."

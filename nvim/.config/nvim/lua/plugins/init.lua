@@ -111,4 +111,23 @@ return {
     cmd = { "Trouble", "TroubleToggle" },
     opts = {},
   },
+
+  -- Git diff viewer (like WebStorm/IntelliJ)
+  {
+    "sindrets/diffview.nvim",
+    cmd = { "DiffviewOpen", "DiffviewFileHistory", "DiffviewClose" },
+    keys = {
+      { "<leader>gv", "<cmd>DiffviewOpen<cr>", desc = "Git diff view" },
+      { "<leader>gf", "<cmd>DiffviewFileHistory %<cr>", desc = "File history" },
+      { "<leader>gl", "<cmd>DiffviewFileHistory<cr>", desc = "Git log" },
+    },
+    opts = {
+      enhanced_diff_hl = true,
+      view = {
+        merge_tool = {
+          layout = "diff3_mixed",
+        },
+      },
+    },
+  },
 }

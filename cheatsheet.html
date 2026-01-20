@@ -400,14 +400,17 @@
     <div class="cols">
       <div>
         <section>
-          <h2>Shell Commands</h2>
+          <h2>Shell Aliases</h2>
           <div class="list">
-            <kbd>tmux</kbd><span>start new session</span>
-            <kbd>tmux new -s name</kbd><span>start named session</span>
-            <kbd>tmux ls</kbd><span>list sessions</span>
-            <kbd>tmux a</kbd><span>attach to last</span>
-            <kbd>tmux a -t name</kbd><span>attach to named</span>
-            <kbd>tmux kill-session -t x</kbd><span>kill session</span>
+            <kbd>t</kbd><span>start new session</span>
+            <kbd>tn name</kbd><span>start named session</span>
+            <kbd>tls</kbd><span>list sessions</span>
+            <kbd>ta</kbd><span>attach to last</span>
+            <kbd>tat</kbd><span>attach (fzf picker)</span>
+            <kbd>tk</kbd><span>kill session (fzf picker)</span>
+            <kbd>tka</kbd><span>kill all sessions</span>
+            <kbd>td</kbd><span>detach</span>
+            <kbd>coding [dir]</kbd><span>dev layout + claude/nvim</span>
           </div>
         </section>
 
@@ -472,6 +475,64 @@
             <kbd>r</kbd><span>reload config</span>
           </div>
           <div class="note">Plugins: sensible, resurrect, continuum, yank, catppuccin</div>
+        </section>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="tmux-header" style="background: var(--mauve);">claude code — ~/.claude</div>
+
+    <div class="cols">
+      <div>
+        <section>
+          <h2>Slash Commands</h2>
+          <div class="list">
+            <kbd>/branch &lt;name&gt;</kbd><span>new branch off master</span>
+            <kbd>/changes</kbd><span>summarize branch changes</span>
+            <kbd>/pr</kbd><span>generate PR description</span>
+            <kbd>/commit</kbd><span>commit with message</span>
+            <kbd>/daniel [pr#]</kbd><span>review as Daniel</span>
+            <kbd>/isc &lt;query&gt;</kbd><span>ISC CLI (read-only)</span>
+            <kbd>/codex &lt;prompt&gt;</kbd><span>run via Codex CLI</span>
+            <kbd>/takeover [id]</kbd><span>take over Olive run</span>
+          </div>
+        </section>
+
+        <section>
+          <h2>Plugins</h2>
+          <div class="list">
+            <kbd>frontend-design</kbd><span>production UI components</span>
+            <kbd>commit-commands</kbd><span>commit/push/PR workflows</span>
+            <kbd>ralph-wiggum</kbd><span>iterative loop technique</span>
+            <kbd>annual-reviews</kbd><span>gather work accomplishments</span>
+          </div>
+        </section>
+      </div>
+
+      <div>
+        <section>
+          <h2>Subagents</h2>
+          <div class="list">
+            <kbd>ast-grep</kbd><span>structural code search</span>
+            <kbd>strict-types-worker</kbd><span>TS strict mode fixer</span>
+            <kbd>eslint-fix-worker</kbd><span>ESLint auto-fixer</span>
+            <kbd>query-worker</kbd><span>React Query v5 migration</span>
+            <kbd>query-lint-worker</kbd><span>TanStack Query lint fixes</span>
+            <kbd>query-review-worker</kbd><span>review RQ migration</span>
+          </div>
+          <div class="note">Subagents run autonomously via Task tool</div>
+        </section>
+
+        <section>
+          <h2>Agent Relay</h2>
+          <div class="list">
+            <kbd>/relay</kbd><span>set up relay channel</span>
+            <kbd>/relay-send</kbd><span>send message</span>
+            <kbd>/relay-check</kbd><span>check for messages</span>
+            <kbd>/relay-stop</kbd><span>stop watcher</span>
+          </div>
+          <div class="note">Cross-project agent communication</div>
         </section>
       </div>
     </div>

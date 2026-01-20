@@ -10,6 +10,7 @@ import { basename, join } from "path";
 import { homedir } from "os";
 
 const color = (s: string, c: string) => `${Bun.color(c, "ansi")}${s}\x1b[0m`;
+const link = (text: string, url: string) => `\x1b]8;;${url}\x1b\\${text}\x1b]8;;\x1b\\`;
 
 const SEARCH_PATHS = [
   join(homedir(), "github"),
@@ -19,7 +20,6 @@ const SEARCH_PATHS = [
 ];
 
 async function findRepo(repoName: string): Promise<string | null> {
-  // Check common locations first
   for (const base of SEARCH_PATHS) {
     const repoPath = join(base, repoName);
     const gitDir = join(repoPath, ".git");
@@ -28,7 +28,6 @@ async function findRepo(repoName: string): Promise<string | null> {
     }
   }
 
-  // Fallback to fd search
   try {
     const result = await $`fd -t d -H "^${repoName}$" ${homedir()} --max-depth 3`
       .quiet()
@@ -37,9 +36,7 @@ async function findRepo(repoName: string): Promise<string | null> {
     if (firstMatch && existsSync(firstMatch)) {
       return firstMatch;
     }
-  } catch {
-    // fd not found or no results
-  }
+  } catch {}
 
   return null;
 }
@@ -51,10 +48,7 @@ interface Worktree {
 }
 
 async function parseWorktrees(repoPath: string): Promise<Worktree[]> {
-  const output = await $`git -C ${repoPath} worktree list --porcelain`
-    .quiet()
-    .text();
-
+  const output = await $`git -C ${repoPath} worktree list --porcelain`.quiet().text();
   const worktrees: Worktree[] = [];
   let current: Partial<Worktree> = {};
 
@@ -62,7 +56,7 @@ async function parseWorktrees(repoPath: string): Promise<Worktree[]> {
     if (line.startsWith("worktree ")) {
       current.path = line.slice(9);
     } else if (line.startsWith("HEAD ")) {
-      current.head = line.slice(5, 12); // First 7 chars of SHA
+      current.head = line.slice(5, 12);
     } else if (line.startsWith("branch refs/heads/")) {
       current.branch = line.slice(18);
     } else if (line === "detached") {
@@ -73,7 +67,6 @@ async function parseWorktrees(repoPath: string): Promise<Worktree[]> {
     }
   }
 
-  // Handle last entry if no trailing newline
   if (current.path) {
     worktrees.push(current as Worktree);
   }
@@ -93,27 +86,70 @@ async function getWorktreeStatus(
   let behind = 0;
 
   try {
-    // Check for uncommitted changes
     const diffResult = await $`git -C ${worktreePath} diff --quiet`.quiet().nothrow();
     const diffCachedResult = await $`git -C ${worktreePath} diff --cached --quiet`.quiet().nothrow();
     hasChanges = diffResult.exitCode !== 0 || diffCachedResult.exitCode !== 0;
-  } catch {
-    // Ignore errors
-  }
+  } catch {}
 
   try {
-    // Get ahead/behind counts
     const aheadBehind = await $`git -C ${worktreePath} rev-list --left-right --count HEAD...@{upstream}`
       .quiet()
       .text();
     const [aheadStr, behindStr] = aheadBehind.trim().split(/\s+/);
     ahead = parseInt(aheadStr, 10) || 0;
     behind = parseInt(behindStr, 10) || 0;
-  } catch {
-    // No upstream or other error
-  }
+  } catch {}
 
   return { hasChanges, ahead, behind };
+}
+
+interface ProcessInfo {
+  pid: number;
+  port: number;
+}
+
+async function getListeningProcesses(): Promise<Map<string, ProcessInfo[]>> {
+  const result = new Map<string, ProcessInfo[]>();
+
+  try {
+    const lsofOutput = await $`lsof -iTCP -sTCP:LISTEN -P -n`.quiet().nothrow().text();
+    const pidPorts = new Map<number, Set<number>>();
+
+    for (const line of lsofOutput.split("\n").slice(1)) {
+      const parts = line.split(/\s+/);
+      if (parts.length < 10) continue;
+
+      const command = parts[0].toLowerCase();
+      const pid = parseInt(parts[1], 10);
+      const name = parts[8]; // e.g., "[::1]:5175" or "127.0.0.1:3000"
+
+      if (!["node", "bun"].includes(command)) continue;
+
+      const portMatch = name.match(/:(\d+)$/);
+      if (!portMatch) continue;
+
+      const port = parseInt(portMatch[1], 10);
+      if (!pidPorts.has(pid)) pidPorts.set(pid, new Set());
+      pidPorts.get(pid)!.add(port);
+    }
+
+    // Get cwd for each unique pid
+    for (const [pid, ports] of pidPorts) {
+      try {
+        const cwdOutput = await $`lsof -p ${pid} -a -d cwd -Fn`.quiet().nothrow().text();
+        const cwdMatch = cwdOutput.match(/\nn(.+)/);
+        if (cwdMatch) {
+          const cwd = cwdMatch[1];
+          if (!result.has(cwd)) result.set(cwd, []);
+          for (const port of ports) {
+            result.get(cwd)!.push({ pid, port });
+          }
+        }
+      } catch {}
+    }
+  } catch {}
+
+  return result;
 }
 
 function colorBranch(branch: string): string {
@@ -141,7 +177,6 @@ async function main() {
     process.exit(1);
   }
 
-  // Verify it's a git repo
   try {
     await $`git -C ${repoPath} rev-parse --git-dir`.quiet();
   } catch {
@@ -149,24 +184,33 @@ async function main() {
     process.exit(1);
   }
 
-  console.log();
-  console.log(`${repoName}`);
-  console.log(`   ${repoPath}`);
-  console.log();
-
+  const listeningProcesses = await getListeningProcesses();
   const worktrees = await parseWorktrees(repoPath);
+
+  console.log();
+  console.log(`  ${color(repoName, "white")}  ${color(repoPath, "gray")}`);
+  console.log();
 
   for (const wt of worktrees) {
     const dirName = basename(wt.path);
-    const status = await getWorktreeStatus(wt.path);
+    const gitStatus = await getWorktreeStatus(wt.path);
 
-    let statusStr = "";
-    if (status.hasChanges) statusStr += " *";
-    if (status.ahead > 0) statusStr += ` ↑${status.ahead}`;
-    if (status.behind > 0) statusStr += ` ↓${status.behind}`;
+    // Build status string
+    let status = "";
+    if (gitStatus.hasChanges) status += color(" *", "yellow");
+    if (gitStatus.ahead > 0) status += color(` ↑${gitStatus.ahead}`, "green");
+    if (gitStatus.behind > 0) status += color(` ↓${gitStatus.behind}`, "red");
 
-    const branchStr = colorBranch(wt.branch);
-    console.log(`   ${dirName.padEnd(30)} ${branchStr}${statusStr}`);
+    // Build server links
+    const processes = listeningProcesses.get(wt.path) || [];
+    const ports = [...new Set(processes.map((p) => p.port))].sort((a, b) => a - b);
+    const serverStr = ports
+      .map((port) => link(color(`:${port}`, "magenta"), `http://localhost:${port}`))
+      .join(" ");
+
+    // Output line
+    const branch = colorBranch(wt.branch);
+    console.log(`  ${color(dirName, "white").padEnd(40)} ${branch}${status}${serverStr ? "  " + serverStr : ""}`);
   }
 
   console.log();
