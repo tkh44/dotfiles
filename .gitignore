@@ -24,6 +24,7 @@
 
 # Claude/Cursor
 .claude/
+!claude/.claude/
 _cursor/
 
 # NVChad generated files (optional - remove if you want to track plugin state)

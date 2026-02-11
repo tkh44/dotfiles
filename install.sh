@@ -91,6 +91,7 @@ stow_package "nvim"
 stow_package "git"
 stow_package "shell"
 stow_package "ghostty"
+stow_package "claude"
 
 
 # Create ~/.zshrc loader if it doesn't exist or doesn't source our config
