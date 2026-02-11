@@ -92,3 +92,27 @@ map("n", "<leader>rr", function()
   vim.cmd("source $MYVIMRC")
   vim.notify("Config reloaded!", vim.log.levels.INFO)
 end, { desc = "Reload config" })
+
+-- Copy file path to clipboard
+local wk = require("which-key")
+wk.add({
+  { "<leader>c", group = "Copy path" },
+})
+
+map("n", "<leader>cp", function()
+  local path = vim.fn.expand("%:p")
+  vim.fn.setreg("+", path)
+  vim.notify("Copied: " .. path)
+end, { desc = "Copy absolute path" })
+
+map("n", "<leader>cr", function()
+  local path = vim.fn.expand("%")
+  vim.fn.setreg("+", path)
+  vim.notify("Copied: " .. path)
+end, { desc = "Copy relative path" })
+
+map("n", "<leader>cf", function()
+  local name = vim.fn.expand("%:t")
+  vim.fn.setreg("+", name)
+  vim.notify("Copied: " .. name)
+end, { desc = "Copy filename" })

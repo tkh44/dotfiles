@@ -1,0 +1,90 @@
+/**
+ * Doomchad Color Theme
+ * Based on NvChad's doomchad theme (doom-one.nvim variant)
+ * Colors in oklch(lightness chroma hue) format
+ */
+
+:root {
+  /* === Base 30 Colors === */
+
+  /* Neutrals */
+  --white: oklch(79.3% 0.017 252);              /* #bbc2cf */
+  --darker-black: oklch(20.1% 0.014 253);       /* #22262e */
+  --black: oklch(23.3% 0.016 253);              /* #282c34 */
+  --black2: oklch(25.5% 0.015 253);             /* #2e323a */
+  --one-bg: oklch(27.6% 0.014 252);             /* #32363e */
+  --one-bg2: oklch(31.4% 0.013 252);            /* #3c4048 */
+  --one-bg3: oklch(33.5% 0.012 252);            /* #41454d */
+
+  /* Greys */
+  --grey: oklch(36.6% 0.011 252);               /* #494d55 */
+  --grey-fg: oklch(39.7% 0.011 252);            /* #53575f */
+  --grey-fg2: oklch(42.8% 0.011 252);           /* #5d6169 */
+  --light-grey: oklch(46.9% 0.011 252);         /* #676b73 */
+
+  /* Reds & Pinks */
+  --red: oklch(66.2% 0.209 25);                 /* #ff6b5a */
+  --baby-pink: oklch(68.3% 0.191 24);           /* #ff7665 */
+  --pink: oklch(68.8% 0.186 358);               /* #ff75a0 */
+
+  /* Greens */
+  --green: oklch(74.5% 0.129 125);              /* #98be65 */
+  --vibrant-green: oklch(79.5% 0.134 125);      /* #a9cf76 */
+
+  /* Blues */
+  --nord-blue: oklch(66.2% 0.138 230);          /* #47a5e5 */
+  --blue: oklch(71.1% 0.131 230);               /* #51afef */
+  --cyan: oklch(82.3% 0.157 210);               /* #46D9FF */
+  --teal: oklch(69.2% 0.091 187);               /* #4db5bd */
+
+  /* Yellows & Oranges */
+  --yellow: oklch(81.4% 0.118 82);              /* #ECBE7B */
+  --sun: oklch(83.7% 0.107 80);                 /* #f2c481 */
+  --orange: oklch(73.1% 0.136 55);              /* #ea9558 */
+
+  /* Purples */
+  --purple: oklch(72.8% 0.182 320);             /* #dc8ef3 */
+  --dark-purple: oklch(67.5% 0.181 320);        /* #c678dd */
+
+  /* UI Elements */
+  --line: oklch(30.4% 0.012 252);               /* #3b3f47 */
+  --statusline-bg: oklch(25.0% 0.013 252);      /* #2d3139 */
+  --lightbg: oklch(30.0% 0.012 252);            /* #3a3e46 */
+  --pmenu-bg: oklch(74.5% 0.129 125);           /* #98be65 (same as green) */
+  --folder-bg: oklch(71.1% 0.131 230);          /* #51afef (same as blue) */
+
+  /* === Base 16 Colors (Terminal Palette) === */
+
+  --base00: oklch(23.3% 0.016 253);             /* #282c34 - Background */
+  --base01: oklch(27.6% 0.014 252);             /* #32363e - Lighter BG */
+  --base02: oklch(31.4% 0.013 252);             /* #3c4048 - Selection BG */
+  --base03: oklch(37.7% 0.011 252);             /* #4e525a - Comments */
+  --base04: oklch(41.8% 0.011 252);             /* #5a5e66 - Dark FG */
+  --base05: oklch(72.4% 0.019 252);             /* #a7aebb - Default FG */
+  --base06: oklch(76.4% 0.019 252);             /* #b3bac7 - Light FG */
+  --base07: oklch(79.3% 0.017 252);             /* #bbc2cf - Lightest FG */
+  --base08: oklch(63.9% 0.214 24);              /* #ff6c6b - Red/Errors */
+  --base09: oklch(73.1% 0.136 55);              /* #ea9558 - Orange */
+  --base0A: oklch(81.4% 0.118 82);              /* #ECBE7B - Yellow */
+  --base0B: oklch(74.5% 0.129 125);             /* #98be65 - Green/Strings */
+  --base0C: oklch(77.3% 0.128 230);             /* #66c4ff - Cyan */
+  --base0D: oklch(72.8% 0.182 320);             /* #dc8ef3 - Purple */
+  --base0E: oklch(67.0% 0.138 230);             /* #48a6e6 - Blue */
+  --base0F: oklch(54.0% 0.148 24);              /* #c85a50 - Dark Red */
+
+  /* === Semantic Aliases === */
+
+  --color-bg: var(--black);
+  --color-bg-alt: var(--one-bg);
+  --color-fg: var(--base05);
+  --color-fg-muted: var(--base03);
+  --color-border: var(--line);
+  --color-accent: var(--blue);
+  --color-success: var(--green);
+  --color-warning: var(--yellow);
+  --color-error: var(--red);
+  --color-info: var(--cyan);
+
+  /* === Type === */
+  color-scheme: dark;
+}
