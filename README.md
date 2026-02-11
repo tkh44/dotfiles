@@ -21,6 +21,7 @@ cd ~/github/dotfiles
 | `ghostty/` | `~/.config/ghostty/` | Ghostty terminal config |
 | `bat/` | `~/.config/bat/` | Syntax-highlighted cat replacement |
 | `shell/` | `~/bin/`, `~/.p10k.zsh` | Utilities like `worktree-status` |
+| `claude/` | `~/.claude/` | Claude Code settings, prompts, statusline |
 
 Each directory is a [stow package](https://www.gnu.org/software/stow/manual/stow.html) that gets symlinked to `$HOME`.
 
