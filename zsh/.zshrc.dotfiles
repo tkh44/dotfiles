@@ -69,17 +69,17 @@ coding() {
   fi
   local name="${dir##*/}"
 
-  if [[ -n "$TMUX" ]]; then
-    echo "Already in tmux. Detach first or run from outside tmux."
-    return 1
-  fi
-
-  # If session exists, just attach to it
+  # If session already exists, attach/switch to it
   if tmux has-session -t "$name" 2>/dev/null; then
-    tmux attach-session -t "$name"
+    if [[ -n "$TMUX" ]]; then
+      tmux switch-client -t "$name"
+    else
+      tmux attach-session -t "$name"
+    fi
     return 0
   fi
 
+  # Create session detached with layout
   tmux new-session -d -s "$name" -c "$dir" \; \
     rename-window "$name" \; \
     split-window -h -c "$dir" \; \
@@ -91,8 +91,83 @@ coding() {
     send-keys 'claude' C-m \; \
     select-pane -t 3 \; \
     send-keys 'nvim' C-m \; \
-    select-pane -t 1 \; \
-    attach-session -t "$name"
+    select-pane -t 1
+
+  # Attach or switch depending on context
+  if [[ -n "$TMUX" ]]; then
+    tmux switch-client -t "$name"
+  else
+    tmux attach-session -t "$name"
+  fi
+}
+
+# Git worktree helpers
+# Create worktree + start coding session
+# Usage: wtc <branch-name>
+# Creates sibling dir: repo-branch alongside the main worktree
+wtc() {
+  local branch="$1"
+  if [[ -z "$branch" ]]; then
+    echo "Usage: wtc <branch-name>"
+    return 1
+  fi
+
+  git rev-parse --git-dir &>/dev/null || { echo "Not in a git repo"; return 1; }
+
+  # Always resolve from the main worktree (works from any worktree)
+  local main_wt
+  main_wt=$(git worktree list --porcelain | head -1 | sed 's/worktree //')
+  local repo_name="${main_wt##*/}"
+  local parent_dir="${main_wt%/*}"
+
+  # Sanitize branch for path (kye/feature -> kye-feature)
+  local safe_branch="${branch//\//-}"
+  local wt_path="${parent_dir}/${repo_name}-${safe_branch}"
+
+  if [[ -d "$wt_path" ]]; then
+    echo "Worktree already exists at ${wt_path}"
+  else
+    # Check out existing branch (local or remote), or create new from HEAD
+    if git show-ref --verify --quiet "refs/heads/${branch}" || \
+       git show-ref --verify --quiet "refs/remotes/origin/${branch}"; then
+      git worktree add "$wt_path" "$branch" || return 1
+    else
+      git worktree add -b "$branch" "$wt_path" || return 1
+    fi
+  fi
+
+  coding "$wt_path"
+}
+
+# Interactive worktree switcher - pick a worktree and open/switch coding session
+wt() {
+  git rev-parse --git-dir &>/dev/null || { echo "Not in a git repo"; return 1; }
+
+  local selected
+  selected=$(git worktree list | fzf --height 40% --reverse --prompt="worktree> " | awk '{print $1}')
+  [[ -z "$selected" ]] && return
+
+  coding "$selected"
+}
+
+# Interactive worktree remover
+wtr() {
+  git rev-parse --git-dir &>/dev/null || { echo "Not in a git repo"; return 1; }
+
+  local main_wt
+  main_wt=$(git worktree list --porcelain | head -1 | sed 's/worktree //')
+
+  # Exclude main worktree from removal candidates
+  local selected
+  selected=$(git worktree list | grep -v "^${main_wt} " | fzf --height 40% --reverse --prompt="remove> " | awk '{print $1}')
+  [[ -z "$selected" ]] && return
+
+  echo "Remove worktree: $selected"
+  read -q "reply?Are you sure? [y/N] "
+  echo
+  [[ "$reply" == "y" ]] || return
+
+  git worktree remove "$selected"
 }
 
 # Git aliases (formerly from Oh My Zsh git plugin)

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vim + Tmux Reference</title>
+  <title>Dev Environment Reference</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
@@ -213,7 +213,7 @@
 <body>
   <div class="container">
     <header>
-      <h1>Vim & Tmux Reference</h1>
+      <h1>Dev Environment Reference</h1>
       <p class="subtitle">Catppuccin Macchiato</p>
     </header>
 
@@ -410,7 +410,7 @@
             <kbd>tk</kbd><span>kill session (fzf picker)</span>
             <kbd>tka</kbd><span>kill all sessions</span>
             <kbd>td</kbd><span>detach</span>
-            <kbd>coding [dir]</kbd><span>dev layout + claude/nvim</span>
+            <kbd>coding [dir]</kbd><span>dev layout (works in/out tmux)</span>
           </div>
         </section>
 
@@ -475,6 +475,75 @@
             <kbd>r</kbd><span>reload config</span>
           </div>
           <div class="note">Plugins: sensible, resurrect, continuum, yank, catppuccin</div>
+        </section>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="tmux-header" style="background: var(--teal);">shell — zsh aliases & functions</div>
+
+    <div class="cols">
+      <div>
+        <section>
+          <h2>Tool Aliases</h2>
+          <div class="list">
+            <kbd>cat</kbd><span>bat (syntax highlighting)</span>
+            <kbd>ls</kbd><span>eza with icons</span>
+            <kbd>vim / vi</kbd><span>nvim</span>
+            <kbd>nano</kbd><span>opens in VS Code</span>
+            <kbd>ff</kbd><span>fzf with bat preview</span>
+            <kbd>date</kbd><span>GNU date (gdate)</span>
+            <kbd>pn</kbd><span>pnpm</span>
+            <kbd>bathelp</kbd><span>bat for --help output</span>
+            <kbd>cursor [path]</kbd><span>open Cursor editor</span>
+          </div>
+        </section>
+
+        <section>
+          <h2>Git Aliases</h2>
+          <div class="list">
+            <kbd>g</kbd><span>git</span>
+            <kbd>ga / gaa</kbd><span>add / add all</span>
+            <kbd>gc / gcm</kbd><span>commit / commit -m</span>
+            <kbd>gco</kbd><span>checkout</span>
+            <kbd>gd</kbd><span>diff</span>
+            <kbd>gst</kbd><span>status</span>
+            <kbd>gp / gl</kbd><span>push / pull</span>
+            <kbd>glog</kbd><span>log graph (oneline)</span>
+          </div>
+        </section>
+      </div>
+
+      <div>
+        <section>
+          <h2>Git Worktrees</h2>
+          <div class="list">
+            <kbd>ws &lt;repo&gt;</kbd><span>worktree status dashboard</span>
+            <kbd>wtc &lt;branch&gt;</kbd><span>create worktree + coding session</span>
+            <kbd>wt</kbd><span>switch worktree (fzf picker)</span>
+            <kbd>wtr</kbd><span>remove worktree (fzf picker)</span>
+          </div>
+          <div class="note">Worktrees go to sibling dirs: <kbd>repo-branch</kbd></div>
+        </section>
+
+        <section>
+          <h2>Diff Viewing (Critique / Delta)</h2>
+          <div class="list">
+            <kbd>cr</kbd><span>critique (diff viewer)</span>
+            <kbd>cw</kbd><span>critique --watch unstaged</span>
+            <kbd>cws</kbd><span>critique --watch staged</span>
+            <kbd>cm</kbd><span>critique PR diff (from merge-base)</span>
+            <kbd>dw</kbd><span>auto-refresh git diff (fswatch)</span>
+            <kbd>batdiff</kbd><span>bat diff for changed files</span>
+          </div>
+        </section>
+
+        <section>
+          <h2>Utility Functions</h2>
+          <div class="list">
+            <kbd>help &lt;cmd&gt;</kbd><span>pretty --help via bat</span>
+          </div>
         </section>
       </div>
     </div>
