@@ -106,13 +106,21 @@ coding() {
 # Usage: wtc <branch-name>
 # Creates sibling dir: repo-branch alongside the main worktree
 wtc() {
-  local branch="$1"
-  if [[ -z "$branch" ]]; then
+  local input="$1"
+  if [[ -z "$input" ]]; then
     echo "Usage: wtc <branch-name>"
     return 1
   fi
 
   git rev-parse --git-dir &>/dev/null || { echo "Not in a git repo"; return 1; }
+
+  # Prefix with GitHub username from git config
+  local ghuser
+  ghuser=$(git config github.user 2>/dev/null)
+  local branch="${input}"
+  if [[ -n "$ghuser" && "$input" != */* ]]; then
+    branch="${ghuser}/${input}"
+  fi
 
   # Always resolve from the main worktree (works from any worktree)
   local main_wt
@@ -120,7 +128,7 @@ wtc() {
   local repo_name="${main_wt##*/}"
   local parent_dir="${main_wt%/*}"
 
-  # Sanitize branch for path (kye/feature -> kye-feature)
+  # Sanitize branch for path (tkh44/feature -> tkh44-feature)
   local safe_branch="${branch//\//-}"
   local wt_path="${parent_dir}/${repo_name}-${safe_branch}"
 
