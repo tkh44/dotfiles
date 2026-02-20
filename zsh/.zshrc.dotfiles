@@ -127,12 +127,17 @@ wtc() {
   if [[ -d "$wt_path" ]]; then
     echo "Worktree already exists at ${wt_path}"
   else
-    # Check out existing branch (local or remote), or create new from HEAD
+    # Fetch latest and determine base branch
+    git fetch origin --quiet
+    local base="origin/master"
+    git show-ref --verify --quiet "refs/remotes/origin/master" || base="origin/main"
+
+    # Check out existing branch (local or remote), or create new from origin/master
     if git show-ref --verify --quiet "refs/heads/${branch}" || \
        git show-ref --verify --quiet "refs/remotes/origin/${branch}"; then
       git worktree add "$wt_path" "$branch" || return 1
     else
-      git worktree add -b "$branch" "$wt_path" || return 1
+      git worktree add -b "$branch" "$wt_path" "$base" || return 1
     fi
   fi
 
