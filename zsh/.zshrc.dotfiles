@@ -175,12 +175,27 @@ wtr() {
   selected=$(git worktree list | grep -v "^${main_wt} " | fzf --height 40% --reverse --prompt="remove> " | awk '{print $1}')
   [[ -z "$selected" ]] && return
 
+  # Extract branch name from worktree
+  local branch
+  branch=$(git worktree list | grep "^${selected} " | sed 's/.*\[//' | sed 's/\]//')
+
   echo "Remove worktree: $selected"
+  [[ -n "$branch" ]] && echo "Branch: $branch"
   read -q "reply?Are you sure? [y/N] "
   echo
   [[ "$reply" == "y" ]] || return
 
-  git worktree remove "$selected"
+  # Fast removal: delete directory + prune instead of slow `git worktree remove`
+  # which triggers gc/cleanup operations on large repos
+  rm -rf "$selected"
+  git worktree prune
+
+  # Offer to delete the branch too
+  if [[ -n "$branch" && "$branch" != "master" && "$branch" != "main" ]]; then
+    read -q "reply?Delete branch '$branch'? [y/N] "
+    echo
+    [[ "$reply" == "y" ]] && git branch -D "$branch" 2>/dev/null
+  fi
 }
 
 # Git aliases (formerly from Oh My Zsh git plugin)
