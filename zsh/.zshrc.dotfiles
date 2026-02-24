@@ -4,6 +4,12 @@ if [[ -n "$CURSOR_AGENT" || -n "$CLAUDE_CODE" ]]; then
   SKIP_HEAVY_SHELL_INIT=1
 fi
 
+# Guard: nuke NODE_ENV if something set it globally (recurring issue)
+if [[ "$NODE_ENV" == "production" ]]; then
+  echo "WARNING: NODE_ENV=production was set at shell init — unsetting it"
+  unset NODE_ENV
+fi
+
 # Homebrew (needed early for fnm and other brew packages)
 eval "$(/opt/homebrew/bin/brew shellenv)"
 
@@ -227,6 +233,15 @@ gwatch() {
   done
 }
 alias dw='gwatch'
+
+# Catch NODE_ENV=production being set mid-session
+_node_env_guard() {
+  if [[ "$NODE_ENV" == "production" ]]; then
+    echo "WARNING: NODE_ENV=production detected after: $(fc -ln -1)" >&2
+    unset NODE_ENV
+  fi
+}
+[[ -z "$SKIP_HEAVY_SHELL_INIT" ]] && precmd_functions+=(_node_env_guard)
 
 export BAT_THEME="Catppuccin Macchiato"
 

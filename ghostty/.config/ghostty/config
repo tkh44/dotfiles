@@ -28,7 +28,10 @@ window-padding-y = 8
 # window-padding-balance = true
 
 # Session Restoration (macOS only)
-window-save-state = always
+# NOTE: "always" restores full session state including env vars from previous
+# sessions, which can leak things like NODE_ENV=production across restarts.
+# Use "default" to let macOS system restoration handle it instead.
+window-save-state = default
 window-inherit-working-directory = true
 
 # Cursor
