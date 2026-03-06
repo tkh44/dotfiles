@@ -155,7 +155,12 @@ wtc() {
     fi
   fi
 
-  coding "$wt_path"
+  # If already in tmux, just cd into the worktree — don't nest sessions
+  if [[ -n "$TMUX" ]]; then
+    cd "$wt_path"
+  else
+    coding "$wt_path"
+  fi
 }
 
 # Interactive worktree switcher - pick a worktree and open/switch coding session

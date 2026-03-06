@@ -8,19 +8,22 @@ When using `@bufbuild/connect-query` with `@tanstack/react-query`, the `createUs
 
 ```typescript
 // CORRECT - spread the options
-const queryOptions = useMemo(() => ({
-  ...getRpc.createUseQueryOptions(request, { transport }),
-  staleTime,
-  enabled,
-}), [deps]);
+const queryOptions = useMemo(
+  () => ({
+    ...getRpc.createUseQueryOptions(request, { transport }),
+    staleTime,
+    enabled,
+  }),
+  [deps],
+);
 
 const query = useQuery({
-  ...queryOptions,  // <-- SPREAD here
+  ...queryOptions, // <-- SPREAD here
 });
 
 // WRONG - this causes "queryKey needs to be an Array" error
 const query = useQuery({
-  queryKey: queryOptions,  // <-- BUG: passing object as queryKey
+  queryKey: queryOptions, // <-- BUG: passing object as queryKey
 });
 ```
 
@@ -33,6 +36,7 @@ Pastry is Instacart's internal CLI for storing and retrieving code snippets via 
 **Installation:** `npm install -g @instacart/pastry-cli`
 
 **Commands:**
+
 - `pastry login` - Authenticate with Okta (device flow, opens browser)
 - `pastry <slug>` - Retrieve snippet by slug (e.g., `pastry crispy-waffle`)
 - `pastry create [name]` - Create snippet from stdin or file
@@ -41,6 +45,7 @@ Pastry is Instacart's internal CLI for storing and retrieving code snippets via 
 - `pastry auth clear` - Clear stored credentials
 
 **Examples:**
+
 ```bash
 pastry crispy-waffle               # Get snippet by slug
 pastry create mycode -f script.ts  # Create from file
@@ -50,12 +55,14 @@ pastry list | head                 # List snippets (non-interactive)
 ```
 
 **Create options:**
+
 - `-f, --file <path>` - Read content from file
 - `-t, --title <title>` - Set snippet title
 - `-n, --filename <name>` - Set filename with extension
 - `-l, --language <lang>` - Override language detection
 
 **Output behavior:**
+
 - TTY mode: Pretty display with glow/bat/less if available
 - Piped mode: Raw content output for scripting
 
@@ -70,6 +77,7 @@ pastry list | head                 # List snippets (non-interactive)
 When code search or refactoring requires understanding code **structure** rather than just text, consider using `ast-grep` (installed at `/opt/homebrew/bin/ast-grep`).
 
 **Proactively suggest `/ast-grep` skill when:**
+
 - User wants to find/replace code patterns across many files
 - Search requires understanding syntax (e.g., "find all async functions that...")
 - Refactoring involves structural transformations
@@ -77,6 +85,7 @@ When code search or refactoring requires understanding code **structure** rather
 - User is looking for specific language constructs (function calls, imports, class definitions)
 
 **Quick usage:**
+
 ```bash
 # Pattern search
 ast-grep -p 'console.log($$$)' --lang javascript
@@ -134,6 +143,7 @@ This provides a thin, rounded scrollbar that adapts to light/dark mode.
 ## Writing Style: Avoid AI Patterns
 
 **Words/phrases to avoid (AI tells):**
+
 - "Delve", "tapestry", "nuanced", "multifaceted", "landscape"
 - "It's worth noting", "It's important to note", "Interestingly"
 - "Furthermore", "Moreover", "Additionally" (overuse)
@@ -144,6 +154,7 @@ This provides a thin, rounded scrollbar that adapts to light/dark mode.
 - Excessive hedging: "It could be argued", "One might say"
 
 **Structural patterns to avoid:**
+
 - Rigid intro → 3 points → conclusion formula
 - Every paragraph starting with a topic sentence
 - Perfectly parallel structure across sections
@@ -152,6 +163,7 @@ This provides a thin, rounded scrollbar that adapts to light/dark mode.
 - "In conclusion" or "To summarize" at the end
 
 **Style fixes:**
+
 - Vary sentence length naturally, not mechanically
 - Skip the preamble—just answer directly
 - Use contractions, be casual where appropriate
@@ -168,6 +180,7 @@ This provides a thin, rounded scrollbar that adapts to light/dark mode.
 Use `/datadog` when the user wants to create Datadog dashboards, charts, or visualizations.
 
 **Triggers:**
+
 - "Create a dashboard for..." / "Build me a chart..."
 - "I have this Datadog JSON, can you modify it?"
 - "Make me an RPM/latency/cost chart"
@@ -175,6 +188,7 @@ Use `/datadog` when the user wants to create Datadog dashboards, charts, or visu
 - User pastes Datadog chart/dashboard JSON
 
 **What it handles:**
+
 - Building dashboards from scratch based on service/metric names
 - Deriving new charts from example JSON
 - Creating individual widgets or full dashboards
@@ -182,6 +196,7 @@ Use `/datadog` when the user wants to create Datadog dashboards, charts, or visu
 - JSON validation and clipboard copy workflow
 
 **Quick reference - common formulas:**
+
 ```
 RPM: default_zero(query1) * 60 with .as_rate()
 Success %: (query1 / query2) * 100
@@ -191,6 +206,14 @@ Top N: top(query1, 4, 'sum', 'desc')
 ```
 
 See `~/.claude/skills/datadog.md` for full documentation.
+
+## AVA Backend (~/ava)
+
+**Migration-first deployment**: DB migrations must be in a separate PR that lands and deploys before the implementation PR. Never bundle migration + application code in one PR — the code may deploy before the migration runs, causing runtime errors from missing columns/tables.
+
+**PR order**: Migration PR → merge & deploy → Implementation PR (models, routes, frontend)
+
+**Forklift Assignment quirk**: `setArray('field', value, 'jsonbArray')` types the value as `object[]`. For `string[]` in JSONB columns, use `setUnsafe<string[]>('field', sql.jsonb(value))` instead.
 
 ## isc-web Monorepo
 

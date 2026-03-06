@@ -11,7 +11,13 @@
     "OTEL_RESOURCE_ATTRIBUTES": "service.name=claude-code-cli,user.email=kye.hohenberger@instacart.com",
     "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1",
     "CLAUDE_CODE_ATTRIBUTION_HEADER": "0",
-    "ANTHROPIC_DEFAULT_OPUS_MODEL": "us.anthropic.claude-opus-4-6-v1"
+    "ANTHROPIC_DEFAULT_OPUS_MODEL": "us.anthropic.claude-opus-4-6-v1",
+    "OTEL_LOG_TOOL_DETAILS": "1",
+    "OTEL_METRICS_INCLUDE_VERSION": "true",
+    "ANTHROPIC_DEFAULT_SONNET_MODEL": "us.anthropic.claude-sonnet-4-6",
+    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+    "CLAUDE_CODE_DISABLE_1M_CONTEXT": "1",
+    "DISABLE_AUTOUPDATER": "1"
   },
   "permissions": {
     "allow": [
@@ -33,6 +39,9 @@
       "SlashCommand",
       "BashOutput",
       "KillShell",
+      "mcp__buildkite__*",
+      "mcp__sentry__*",
+      "mcp__glean_default__*",
       "mcp__playwright__*",
       "mcp__chrome-devtools__*",
       "mcp__chrome-devtools__navigate_page",
@@ -67,13 +76,11 @@
     ],
     "deny": [],
     "ask": [
-      "Bash(git commit:*)",
-      "Bash(git push:*)",
-      "Bash(rm:*)"
+      "Bash(isc:*)"
     ],
     "defaultMode": "acceptEdits"
   },
-  "model": "us.anthropic.claude-opus-4-6-v1",
+  "model": "opus",
   "statusLine": {
     "type": "command",
     "command": "bash ~/.claude/statusline.sh"
@@ -89,7 +96,10 @@
     "plugin-dev@claude-plugins-official": true,
     "claude-md-management@claude-plugins-official": true,
     "image-gen@instacart": true,
-    "doc-writer@instacart": true
+    "doc-writer@instacart": true,
+    "codex@instacart": true,
+    "md2doc@instacart": true,
+    "autopilot@local": true
   },
   "extraKnownMarketplaces": {
     "instacart": {
@@ -97,6 +107,16 @@
         "source": "github",
         "repo": "instacart/claude-marketplace"
       }
+    },
+    "local": {
+      "source": {
+        "source": "directory",
+        "path": "/Users/kyehohenberger/.claude/plugins/local"
+      }
     }
-  }
+  },
+  "companyAnnouncements": [
+    "Bravo Six, going dark"
+  ],
+  "skipDangerousModePermissionPrompt": true
 }

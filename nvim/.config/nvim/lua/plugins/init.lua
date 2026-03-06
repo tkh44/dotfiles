@@ -63,6 +63,13 @@ return {
   -- Treesitter with TypeScript/React support
   {
     "nvim-treesitter/nvim-treesitter",
+    lazy = false,
+    dependencies = {
+      "nvim-treesitter/nvim-treesitter-textobjects",
+    },
+    config = function(_, opts)
+      require("nvim-treesitter.configs").setup(opts)
+    end,
     opts = {
       ensure_installed = {
         "vim",
@@ -82,7 +89,33 @@ return {
         "gosum",
         "gowork",
       },
+      incremental_selection = {
+        enable = true,
+        keymaps = {
+          init_selection = "gnn",
+          node_incremental = "grn",
+          scope_incremental = "grc",
+          node_decremental = "grm",
+        },
+      },
+      textobjects = {
+        select = {
+          enable = true,
+          lookahead = true,
+          keymaps = {
+            ["af"] = "@function.outer",
+            ["if"] = "@function.inner",
+            ["ac"] = "@class.outer",
+            ["ic"] = "@class.inner",
+          },
+        },
+      },
     },
+  },
+
+  {
+    "nvim-treesitter/nvim-treesitter-textobjects",
+    lazy = true,
   },
 
   -- Auto-close and auto-rename JSX tags
@@ -112,6 +145,18 @@ return {
     opts = {},
   },
 
+  -- Seamless navigation between nvim splits and tmux panes (Ctrl-h/j/k/l)
+  {
+    "christoomey/vim-tmux-navigator",
+    lazy = false,
+    keys = {
+      { "<C-h>", "<cmd>TmuxNavigateLeft<cr>", desc = "Navigate left (nvim/tmux)" },
+      { "<C-j>", "<cmd>TmuxNavigateDown<cr>", desc = "Navigate down (nvim/tmux)" },
+      { "<C-k>", "<cmd>TmuxNavigateUp<cr>", desc = "Navigate up (nvim/tmux)" },
+      { "<C-l>", "<cmd>TmuxNavigateRight<cr>", desc = "Navigate right (nvim/tmux)" },
+    },
+  },
+
   -- Git diff viewer (like WebStorm/IntelliJ)
   {
     "sindrets/diffview.nvim",
@@ -129,5 +174,31 @@ return {
         },
       },
     },
+  },
+
+  -- Croissant-style review comments directly in Neovim
+  {
+    dir = "/Users/kyehohenberger/instacart/croissant.nvim",
+    name = "croissant.nvim",
+    lazy = false,
+    config = function()
+      require("croissant").setup({
+        backend = "local",
+        default_keymaps = true,
+        keymaps = {
+          comment = "<leader>mc",
+          review = "<leader>mr",
+          codex = "<leader>mx",
+        },
+        prompt = {
+          backend = "float",
+          float = {
+            width = 72,
+            border = "rounded",
+            title = "Croissant comment",
+          },
+        },
+      })
+    end,
   },
 }
