@@ -155,9 +155,31 @@ wtc() {
     fi
   fi
 
-  # If already in tmux, just cd into the worktree — don't nest sessions
-  if [[ -n "$TMUX" ]]; then
-    cd "$wt_path"
+  # Open a new cmux workspace tab in the worktree with layout:
+  # top-left terminal, top-right vim, bottom-left terminal.
+  if command -v cmux >/dev/null 2>&1; then
+    local ws_raw ws_id left_surface right_raw right_surface
+    ws_raw=$(cmux new-workspace --command "cd ${(q)wt_path}; exec zsh -l") || return 1
+    ws_id="${ws_raw##* }"
+
+    left_surface=$(cmux list-panels --workspace "$ws_id" | awk '/^\*/{print $2; exit}')
+    if [[ -z "$left_surface" ]]; then
+      echo "Failed to determine initial cmux surface"
+      return 1
+    fi
+
+    right_raw=$(cmux new-split right --workspace "$ws_id" --surface "$left_surface") || return 1
+    right_surface=$(awk '{print $2}' <<< "$right_raw")
+    if [[ -z "$right_surface" ]]; then
+      echo "Failed to determine right cmux surface"
+      return 1
+    fi
+
+    cmux new-split down --workspace "$ws_id" --surface "$left_surface" >/dev/null || return 1
+    cmux send-panel --panel "$right_surface" --workspace "$ws_id" "vim" >/dev/null || return 1
+    cmux send-key-panel --panel "$right_surface" --workspace "$ws_id" Enter >/dev/null || return 1
+    cmux focus-panel --panel "$left_surface" --workspace "$ws_id" >/dev/null || return 1
+    cmux select-workspace --workspace "$ws_id" >/dev/null || return 1
   else
     coding "$wt_path"
   fi
