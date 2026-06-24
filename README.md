@@ -20,6 +20,10 @@ cd ~/github/dotfiles
 | `tmux/` | `~/.tmux.conf` | Tmux with Catppuccin, `Ctrl+a` prefix |
 | `ghostty/` | `~/.config/ghostty/` | Ghostty terminal config |
 | `bat/` | `~/.config/bat/` | Syntax-highlighted cat replacement |
+| `starship/` | `~/.config/starship.toml` | Starship prompt config |
+| `zed/` | `~/.config/zed/settings.json` | Zed editor preferences |
+| `gh/` | `~/.config/gh/config.yml` | GitHub CLI non-auth preferences |
+| `bun/` | `~/.bunfig.toml` | Bun install preferences |
 | `shell/` | `~/bin/`, `~/.p10k.zsh` | Utilities like `worktree-status` |
 | `claude/` | `~/.claude/` | Claude Code settings, prompts, statusline |
 
@@ -29,7 +33,7 @@ Each directory is a [stow package](https://www.gnu.org/software/stow/manual/stow
 
 ### Shell (zsh)
 
-- Spaceship prompt (minimal, fast)
+- Fast pure-zsh prompt with optional Starship config available
 - 150+ git aliases (`ga`, `gc`, `gp`, `glog`...)
 - fnm for Node version management
 - `coding()` function creates a 4-pane tmux layout
@@ -51,7 +55,7 @@ Each directory is a [stow package](https://www.gnu.org/software/stow/manual/stow
 
 ### Theme
 
-Catppuccin Macchiato everywhere (bat, tmux, ghostty, delta)
+Catppuccin Macchiato across bat, tmux, Ghostty, and delta.
 
 ## Installation
 
@@ -66,5 +70,6 @@ Catppuccin Macchiato everywhere (bat, tmux, ghostty, delta)
 
 - `~/.zsh/local.zsh` — Machine-specific shell config (gitignored)
 - `~/.gitconfig.local` — User email/signing key (gitignored)
+- `~/.config/gh/hosts.yml` — GitHub CLI auth, intentionally not tracked
 
 See `llms.md` for detailed documentation.

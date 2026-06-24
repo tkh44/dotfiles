@@ -1,5 +1,8 @@
+# Load datetime module early so EPOCHSECONDS is available for cmux hooks
+zmodload zsh/datetime 2>/dev/null || true
+
 # Skip heavy shell init for AI agents (Cursor, Claude Code)
-if [[ -n "$CURSOR_AGENT" || -n "$CLAUDE_CODE" ]]; then
+if [[ -n "${CURSOR_AGENT:-}" || -n "${CLAUDE_CODE:-}" ]]; then
   PS1='%~ %# '
   SKIP_HEAVY_SHELL_INIT=1
 fi
@@ -11,17 +14,29 @@ if [[ "$NODE_ENV" == "production" ]]; then
 fi
 
 # Homebrew (needed early for fnm and other brew packages)
-eval "$(/opt/homebrew/bin/brew shellenv)"
+# Cached to avoid spawning Ruby on every shell start. Regenerate with:
+#   /opt/homebrew/bin/brew shellenv > ~/.cache/brew_shellenv.zsh
+if [[ -f ~/.cache/brew_shellenv.zsh ]]; then
+  source ~/.cache/brew_shellenv.zsh
+else
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+fi
 
-# fnm (Fast Node Manager) - fast, no lazy loading needed
-# --version-file-strategy=recursive: looks up parent dirs for .node-version/.nvmrc
-# --log-level=quiet: suppress output
+# fnm (Fast Node Manager)
+# Note: `fnm env` is a Homebrew binary; CrowdStrike scans it adding ~6s.
+# Get IT to add /opt/homebrew to CrowdStrike exclusions to fix permanently.
 eval "$(fnm env --use-on-cd --version-file-strategy=recursive --log-level=quiet)"
 
-# Spaceship prompt
+# Pure zsh prompt — no external binaries, instant draws
+# Matches old starship layout: dir [on branch]\n❯
 if [[ -z "$SKIP_HEAVY_SHELL_INIT" ]]; then
-  [[ -f ~/.config/spaceship.zsh ]] && source ~/.config/spaceship.zsh
-  source "$(brew --prefix)/opt/spaceship/spaceship.zsh"
+  autoload -Uz vcs_info
+  zstyle ':vcs_info:*' enable git
+  zstyle ':vcs_info:git:*' formats 'on %F{magenta}%b%f'
+  precmd_functions+=(vcs_info)
+  setopt prompt_subst
+  PROMPT='%F{cyan}%3~%f${vcs_info_msg_0_:+ ${vcs_info_msg_0_}}
+%(?.%F{green}❯%f.%F{red}❯%f) '
 fi
 
 # Environment variables
@@ -295,8 +310,6 @@ export PATH="$HOME/bin:$PATH"
 if [[ -z "$SKIP_HEAVY_SHELL_INIT" ]]; then
   [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 fi
-
-export PGHOST=localhost
 
 # Rust
 [[ -f "$HOME/.cargo/env" ]] && source "$HOME/.cargo/env"

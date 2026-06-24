@@ -1,0 +1,44 @@
+{
+  "project_panel": {
+    "dock": "left"
+  },
+  "outline_panel": {
+    "dock": "left"
+  },
+  "collaboration_panel": {
+    "dock": "left"
+  },
+  "agent": {
+    "dock": "right",
+    "favorite_models": [],
+    "model_parameters": []
+  },
+  "git_panel": {
+    "dock": "left"
+  },
+  "vim_mode": true,
+  "base_keymap": "VSCode",
+  "tab_bar": {
+    "show": false
+  },
+  "sticky_scroll": {
+    "enabled": false
+  },
+  "minimap": {
+    "show": "never"
+  },
+  "max_tabs": 8,
+  "autosave": "on_focus_change",
+  "buffer_font_family": "JetBrains Mono",
+  "show_edit_predictions": true,
+  "session": {
+    "trust_all_worktrees": true
+  },
+  "ui_font_size": 14,
+  "buffer_font_size": 14,
+  "theme": {
+    "mode": "system",
+    "light": "One Light",
+    "dark": "Ayu Mirage"
+  }
+}

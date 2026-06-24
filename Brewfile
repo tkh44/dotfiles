@@ -19,9 +19,19 @@ brew "git-delta"     # Better git diffs
 brew "coreutils"     # GNU core utilities (gdate, etc.)
 brew "fswatch"       # File change monitor
 brew "gnupg"         # GPG for commit signing
+brew "git-lfs"       # Large-file support for git
+brew "jq"            # JSON processor
+brew "yq"            # YAML processor
+brew "rsync"         # Modern rsync
+brew "hyperfine"     # Command benchmarking
+brew "ast-grep"      # Structural code search
+brew "shellcheck"    # Shell script linting
+brew "glow"          # Terminal markdown renderer
+brew "lazygit"       # Git TUI
 
 # Shell
 brew "zsh"
+brew "tmux"
 brew "spaceship"                      # Spaceship prompt
 brew "zsh-history-substring-search"   # Better history search (fixes cursor issues in tmux)
 
@@ -42,6 +52,9 @@ cask "font-jetbrains-mono-nerd-font"  # Used by Ghostty and p10k
 
 # Casks (GUI apps)
 cask "ghostty"           # Terminal emulator
+cask "docker"            # Docker Desktop
+cask "okta"              # Okta Verify
 # cask "iterm2"
 # cask "visual-studio-code"
 # cask "cursor"
+brew "starship"

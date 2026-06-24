@@ -215,6 +215,11 @@ See `~/.claude/skills/datadog.md` for full documentation.
 
 **Forklift Assignment quirk**: `setArray('field', value, 'jsonbArray')` types the value as `object[]`. For `string[]` in JSONB columns, use `setUnsafe<string[]>('field', sql.jsonb(value))` instead.
 
+## Benchmarking & Timing
+
+- Use `hyperfine` for benchmarks (multiple runs, statistical comparison, warmup support).
+- Use `time` for simple one-off timing tests.
+
 ## isc-web Monorepo
 
 When running type-check in the isc-web monorepo, always use the workspaces flag:

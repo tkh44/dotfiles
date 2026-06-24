@@ -91,7 +91,12 @@ stow_package "nvim"
 stow_package "git"
 stow_package "shell"
 stow_package "ghostty"
+stow_package "bat"
 stow_package "claude"
+stow_package "starship"
+stow_package "zed"
+stow_package "gh"
+stow_package "bun"
 
 
 # Create ~/.zshrc loader if it doesn't exist or doesn't source our config
@@ -132,7 +137,7 @@ echo "  Git Configuration"
 echo "==================================="
 current_email=$(git config --global user.email 2>/dev/null || echo "")
 if [[ -z "$current_email" ]]; then
-    read -p "Enter your git email: " git_email
+    read -r -p "Enter your git email: " git_email
     git config -f ~/.gitconfig.local user.email "$git_email"
     echo "Git email set to: $git_email"
 else

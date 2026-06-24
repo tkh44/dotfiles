@@ -1,0 +1,13 @@
+format = "$directory$git_branch\n$character"
+
+[directory]
+truncation_length = 3
+truncate_to_repo = false
+
+[git_branch]
+format = "on [$branch](bold purple)"
+symbol = ""
+
+[character]
+success_symbol = "[❯](bold green)"
+error_symbol = "[❯](bold red)"
